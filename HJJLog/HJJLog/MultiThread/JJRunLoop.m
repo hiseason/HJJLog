@@ -15,6 +15,9 @@ RunLoop 与线程
  
  RunLoopMode
  一个 runLoop 同时只能有一种 mode
+ 
+ 系统在每个runloop迭代中都加入了自动释放池Push和Pop，当RunLoop开启时，就会自动创建一个自动释放池，当RunLoop在休息之前会释放掉自动释放池的东西，然后重新创建一个新的空的自动释放池，当RunLoop被唤醒重新开始跑圈时，Timer,Source等新的事件就会放到新的自动释放池中，当RunLoop退出的时候也会被释放。
+ 注意：只有主线程的RunLoop会默认启动。也就意味着会自动创建自动释放池，子线程需要在线程调度方法中手动添加自动释放池。
  */
 
 #import "JJRunLoop.h"
