@@ -7,6 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		1D54D44725BAE28C00380784 /* JJCategory.m in Sources */ = {isa = PBXBuildFile; fileRef = 1D54D44625BAE28C00380784 /* JJCategory.m */; };
+		1D54D44D25BAE90A00380784 /* JJProperty.m in Sources */ = {isa = PBXBuildFile; fileRef = 1D54D44C25BAE90A00380784 /* JJProperty.m */; };
+		1D54D45725BAEAB200380784 /* JJRunLoop.m in Sources */ = {isa = PBXBuildFile; fileRef = 1D54D45625BAEAB200380784 /* JJRunLoop.m */; };
+		1D54D46F25BBE0C400380784 /* Algorithm.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1D54D46E25BBE0C400380784 /* Algorithm.swift */; };
 		1DEDAC8C25AD7ED4004AB77D /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 1DEDAC8B25AD7ED4004AB77D /* AppDelegate.m */; };
 		1DEDAC8F25AD7ED4004AB77D /* SceneDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 1DEDAC8E25AD7ED4004AB77D /* SceneDelegate.m */; };
 		1DEDAC9225AD7ED4004AB77D /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1DEDAC9125AD7ED4004AB77D /* ViewController.m */; };
@@ -18,6 +22,7 @@
 		1DEDACB225AD7ED6004AB77D /* HJJLogUITests.m in Sources */ = {isa = PBXBuildFile; fileRef = 1DEDACB125AD7ED6004AB77D /* HJJLogUITests.m */; };
 		1DEDACC825AD80C8004AB77D /* JJKVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 1DEDACC725AD80C8004AB77D /* JJKVC.m */; };
 		1DEDACD525AD8943004AB77D /* JJView.m in Sources */ = {isa = PBXBuildFile; fileRef = 1DEDACD425AD8943004AB77D /* JJView.m */; };
+		1DEDACE425ADA7AA004AB77D /* JJButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 1DEDACE325ADA7AA004AB77D /* JJButton.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -38,6 +43,14 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		1D54D44525BAE28C00380784 /* JJCategory.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JJCategory.h; sourceTree = "<group>"; };
+		1D54D44625BAE28C00380784 /* JJCategory.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JJCategory.m; sourceTree = "<group>"; };
+		1D54D44B25BAE90A00380784 /* JJProperty.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JJProperty.h; sourceTree = "<group>"; };
+		1D54D44C25BAE90A00380784 /* JJProperty.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JJProperty.m; sourceTree = "<group>"; };
+		1D54D45525BAEAB200380784 /* JJRunLoop.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JJRunLoop.h; sourceTree = "<group>"; };
+		1D54D45625BAEAB200380784 /* JJRunLoop.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JJRunLoop.m; sourceTree = "<group>"; };
+		1D54D46D25BBE0C300380784 /* HJJLog-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "HJJLog-Bridging-Header.h"; sourceTree = "<group>"; };
+		1D54D46E25BBE0C400380784 /* Algorithm.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Algorithm.swift; sourceTree = "<group>"; };
 		1DEDAC8725AD7ED4004AB77D /* HJJLog.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = HJJLog.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		1DEDAC8A25AD7ED4004AB77D /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		1DEDAC8B25AD7ED4004AB77D /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
@@ -60,6 +73,8 @@
 		1DEDACC725AD80C8004AB77D /* JJKVC.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JJKVC.m; sourceTree = "<group>"; };
 		1DEDACD325AD8943004AB77D /* JJView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JJView.h; sourceTree = "<group>"; };
 		1DEDACD425AD8943004AB77D /* JJView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JJView.m; sourceTree = "<group>"; };
+		1DEDACE225ADA7AA004AB77D /* JJButton.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JJButton.h; sourceTree = "<group>"; };
+		1DEDACE325ADA7AA004AB77D /* JJButton.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JJButton.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -87,6 +102,23 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		1D54D45425BAEA8E00380784 /* MultiThread */ = {
+			isa = PBXGroup;
+			children = (
+				1D54D45525BAEAB200380784 /* JJRunLoop.h */,
+				1D54D45625BAEAB200380784 /* JJRunLoop.m */,
+			);
+			path = MultiThread;
+			sourceTree = "<group>";
+		};
+		1D54D46C25BBE0B300380784 /* Algorithm */ = {
+			isa = PBXGroup;
+			children = (
+				1D54D46E25BBE0C400380784 /* Algorithm.swift */,
+			);
+			path = Algorithm;
+			sourceTree = "<group>";
+		};
 		1DEDAC7E25AD7ED4004AB77D = {
 			isa = PBXGroup;
 			children = (
@@ -110,6 +142,8 @@
 		1DEDAC8925AD7ED4004AB77D /* HJJLog */ = {
 			isa = PBXGroup;
 			children = (
+				1D54D46C25BBE0B300380784 /* Algorithm */,
+				1D54D45425BAEA8E00380784 /* MultiThread */,
 				1DEDACD225AD892C004AB77D /* View */,
 				1DEDACC525AD80AA004AB77D /* OCSpeciality */,
 				1DEDAC8A25AD7ED4004AB77D /* AppDelegate.h */,
@@ -123,6 +157,7 @@
 				1DEDAC9825AD7ED6004AB77D /* LaunchScreen.storyboard */,
 				1DEDAC9B25AD7ED6004AB77D /* Info.plist */,
 				1DEDAC9C25AD7ED6004AB77D /* main.m */,
+				1D54D46D25BBE0C300380784 /* HJJLog-Bridging-Header.h */,
 			);
 			path = HJJLog;
 			sourceTree = "<group>";
@@ -148,6 +183,10 @@
 		1DEDACC525AD80AA004AB77D /* OCSpeciality */ = {
 			isa = PBXGroup;
 			children = (
+				1D54D44B25BAE90A00380784 /* JJProperty.h */,
+				1D54D44C25BAE90A00380784 /* JJProperty.m */,
+				1D54D44525BAE28C00380784 /* JJCategory.h */,
+				1D54D44625BAE28C00380784 /* JJCategory.m */,
 				1DEDACC625AD80C8004AB77D /* JJKVC.h */,
 				1DEDACC725AD80C8004AB77D /* JJKVC.m */,
 			);
@@ -159,6 +198,8 @@
 			children = (
 				1DEDACD325AD8943004AB77D /* JJView.h */,
 				1DEDACD425AD8943004AB77D /* JJView.m */,
+				1DEDACE225ADA7AA004AB77D /* JJButton.h */,
+				1DEDACE325ADA7AA004AB77D /* JJButton.m */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -229,6 +270,7 @@
 				TargetAttributes = {
 					1DEDAC8625AD7ED4004AB77D = {
 						CreatedOnToolsVersion = 12.3;
+						LastSwiftMigration = 1230;
 					};
 					1DEDACA125AD7ED6004AB77D = {
 						CreatedOnToolsVersion = 12.3;
@@ -293,11 +335,16 @@
 			buildActionMask = 2147483647;
 			files = (
 				1DEDAC9225AD7ED4004AB77D /* ViewController.m in Sources */,
+				1D54D44725BAE28C00380784 /* JJCategory.m in Sources */,
 				1DEDAC8C25AD7ED4004AB77D /* AppDelegate.m in Sources */,
 				1DEDACD525AD8943004AB77D /* JJView.m in Sources */,
 				1DEDAC9D25AD7ED6004AB77D /* main.m in Sources */,
+				1D54D44D25BAE90A00380784 /* JJProperty.m in Sources */,
 				1DEDAC8F25AD7ED4004AB77D /* SceneDelegate.m in Sources */,
 				1DEDACC825AD80C8004AB77D /* JJKVC.m in Sources */,
+				1D54D46F25BBE0C400380784 /* Algorithm.swift in Sources */,
+				1DEDACE425ADA7AA004AB77D /* JJButton.m in Sources */,
+				1D54D45725BAEAB200380784 /* JJRunLoop.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -469,6 +516,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = YSUX84SD9U;
 				INFOPLIST_FILE = HJJLog/Info.plist;
@@ -478,6 +526,9 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = haojiajia.HJJLog;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "HJJLog/HJJLog-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -487,6 +538,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = YSUX84SD9U;
 				INFOPLIST_FILE = HJJLog/Info.plist;
@@ -496,6 +548,8 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = haojiajia.HJJLog;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "HJJLog/HJJLog-Bridging-Header.h";
+				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
@@ -503,6 +557,7 @@
 		1DEDACBA25AD7ED6004AB77D /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = YSUX84SD9U;
@@ -523,6 +578,7 @@
 		1DEDACBB25AD7ED6004AB77D /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = YSUX84SD9U;
@@ -543,6 +599,7 @@
 		1DEDACBD25AD7ED6004AB77D /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = YSUX84SD9U;
 				INFOPLIST_FILE = HJJLogUITests/Info.plist;
@@ -561,6 +618,7 @@
 		1DEDACBE25AD7ED6004AB77D /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = YSUX84SD9U;
 				INFOPLIST_FILE = HJJLogUITests/Info.plist;
