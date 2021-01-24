@@ -14,6 +14,7 @@
 		1D54D47B25BBE2FC00380784 /* JJKVO.m in Sources */ = {isa = PBXBuildFile; fileRef = 1D54D47A25BBE2FC00380784 /* JJKVO.m */; };
 		1D54D48125BBF29200380784 /* JJBlock.m in Sources */ = {isa = PBXBuildFile; fileRef = 1D54D48025BBF29200380784 /* JJBlock.m */; };
 		1D54D48725BBFB6700380784 /* JJRuntime.m in Sources */ = {isa = PBXBuildFile; fileRef = 1D54D48625BBFB6700380784 /* JJRuntime.m */; };
+		1D600A9825BD864800D53E47 /* JJGCD.m in Sources */ = {isa = PBXBuildFile; fileRef = 1D600A9725BD864800D53E47 /* JJGCD.m */; };
 		1DEDAC8C25AD7ED4004AB77D /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 1DEDAC8B25AD7ED4004AB77D /* AppDelegate.m */; };
 		1DEDAC8F25AD7ED4004AB77D /* SceneDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 1DEDAC8E25AD7ED4004AB77D /* SceneDelegate.m */; };
 		1DEDAC9225AD7ED4004AB77D /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1DEDAC9125AD7ED4004AB77D /* ViewController.m */; };
@@ -60,6 +61,8 @@
 		1D54D48025BBF29200380784 /* JJBlock.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JJBlock.m; sourceTree = "<group>"; };
 		1D54D48525BBFB6700380784 /* JJRuntime.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JJRuntime.h; sourceTree = "<group>"; };
 		1D54D48625BBFB6700380784 /* JJRuntime.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JJRuntime.m; sourceTree = "<group>"; };
+		1D600A9625BD864800D53E47 /* JJGCD.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JJGCD.h; sourceTree = "<group>"; };
+		1D600A9725BD864800D53E47 /* JJGCD.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JJGCD.m; sourceTree = "<group>"; };
 		1DEDAC8725AD7ED4004AB77D /* HJJLog.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = HJJLog.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		1DEDAC8A25AD7ED4004AB77D /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		1DEDAC8B25AD7ED4004AB77D /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
@@ -116,6 +119,8 @@
 			children = (
 				1D54D45525BAEAB200380784 /* JJRunLoop.h */,
 				1D54D45625BAEAB200380784 /* JJRunLoop.m */,
+				1D600A9625BD864800D53E47 /* JJGCD.h */,
+				1D600A9725BD864800D53E47 /* JJGCD.m */,
 			);
 			path = MultiThread;
 			sourceTree = "<group>";
@@ -355,6 +360,7 @@
 				1D54D44725BAE28C00380784 /* JJCategory.m in Sources */,
 				1DEDAC8C25AD7ED4004AB77D /* AppDelegate.m in Sources */,
 				1DEDACD525AD8943004AB77D /* JJView.m in Sources */,
+				1D600A9825BD864800D53E47 /* JJGCD.m in Sources */,
 				1DEDAC9D25AD7ED6004AB77D /* main.m in Sources */,
 				1D54D44D25BAE90A00380784 /* JJProperty.m in Sources */,
 				1D54D47B25BBE2FC00380784 /* JJKVO.m in Sources */,

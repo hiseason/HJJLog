@@ -47,8 +47,8 @@
         const char * name = ivar_getName(ivar);
         //使用KVC直接获取相关属性的值
         [ivarNames addObject:[NSString stringWithUTF8String:name]];
-        NSObject *value = [obj valueForKey:[NSString stringWithUTF8String:name]];
-        NSLog(@"%d的成员变量: %s %@",[obj class], name, value);
+        NSObject *value = [self valueForKey:[NSString stringWithUTF8String:name]];
+        NSLog(@"%@的成员变量: %s %@",[self class], name, value);
     }
     NSLog(@"成员变量列表: %@",ivarNames);
     //需要释放获取到的属性

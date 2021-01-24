@@ -7,6 +7,7 @@
 
 #import "ViewController.h"
 #import "JJKVO.h"
+#import "JJGCD.h"
 
 @interface ViewController ()
 @property (nonatomic, strong) NSString *string;
@@ -18,6 +19,7 @@
     [super viewDidLoad];
     
     JJKVO *kvo = [[JJKVO alloc] init];
+    JJGCD *gcd = [[JJGCD alloc] init];
     
 //    dispatch_queue_t queue = dispatch_queue_create("queue", DISPATCH_QUEUE_CONCURRENT);
 //    for (int i = 0; i < 100000  ; i++) {
