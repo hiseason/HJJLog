@@ -22,18 +22,99 @@
  https://juejin.cn/post/6844903566398717960
  */
 
+/*
+ NSOperation(AFNetworking SDWebImage)
+ 1.任务执行状态控制 isReady isExecuting isFinished isCancelled
+   只重写main 方法, 底层控制任务状态
+   重写 start 方法, 自行控制任务状态
+ 2.添加任务依赖
+ 3.最大并发量
+ NSOperation 对象在 Finished 后如何从 queue 中移除的
+ 
+ NSThread 实现常驻线程
+ */
+
+/*
+ @synchroniced 创建单例对象, 保证多线程环境下创建对象是单一的
+ atomic 只保证赋值操作的线程安全性, 不保证使用操作的线程安全
+ OSSpinLock 自旋锁, 循环等待询问, 不释放当前资源(一般的锁在第一次获取到后,后续线程是获取不到的,它会释放它当前的资源, OSSpinLock 不能获得锁,就会一直轮询,直到获得锁,类似while循环)
+            用于轻量级数据访问, 引用计数器 +1,-1
+ NSLock
+ NSRecursiveLock 递归锁, 解决递归方法在多线程中的调用问题
+ dispatch_semaphore_t 信号量
+ */
+
 #import "JJGCD.h"
+
+@interface JJGCD()
+
+@property(atomic) NSMutableArray *array;
+@property(nonatomic, strong) NSLock *lock;
+
+@end
 
 @implementation JJGCD
 
 - (instancetype)init {
     if (self = [super init]) {
+        self.array = [NSMutableArray array]; //✅ atomic 保证赋值操作的线程安全
+        [self.array addObject: @"atomic"]; //❌ atomic 不保证使用操作的线程安全
+        self.lock = [[NSLock alloc] init];
         [self concurrentQueueSyncNest];
     }
     return self;
 }
 
-#pragma mark - 高级考察
+#pragma mark - 锁
+- (void)methodA {
+    [self.lock lock];
+    [self methodB];
+    [self.lock unlock];
+}
+
+- (void)methodB {
+    [self.lock lock];
+    //操作逻辑
+    [self.lock unlock];
+}
+
+//执行两个异步的AFN网络请求，第二个网络请求需要等待第一个网络请求响应后再执行
+- (void)semaphore {
+    NSString *urlString1 = @"/Users/ws/Downloads/Snip20161223_20.png";
+    NSString *urlString2 = @"/Users/ws/Downloads/Snip20161223_21.png";
+    // 创建信号量
+    dispatch_semaphore_t sem = dispatch_semaphore_create(0);
+    dispatch_async(dispatch_get_global_queue(0, 0), ^{
+//        AFHTTPSessionManager *manager = [AFHTTPSessionManager manager];
+//        [manager POST:urlString1 parameters:nil progress:^(NSProgress * _Nonnull downloadProgress) {
+//        } success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
+//            NSLog(@"1完成！");
+//            // 发送信号量
+//            dispatch_semaphore_signal(sem);
+//        } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
+//            NSLog(@"1失败！");
+//            // 发送信号量
+//            dispatch_semaphore_signal(sem);
+//        }];
+    });
+    
+    dispatch_async(dispatch_get_global_queue(0, 0), ^{
+        // 等待信号量
+        dispatch_semaphore_wait(sem, DISPATCH_TIME_FOREVER);
+//        AFHTTPSessionManager *manager = [AFHTTPSessionManager manager];
+//
+//        [manager POST:urlString2 parameters:nil progress:^(NSProgress * _Nonnull downloadProgress) {
+//
+//        } success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
+//            NSLog(@"2完成！");
+//        } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
+//            NSLog(@"2失败！");
+//        }];
+    });
+}
+
+
+#pragma mark - 多线程高级考察
 //主队列同步执行
 - (void)mainQueueSync {
     dispatch_queue_t mainQueue = dispatch_get_main_queue();
