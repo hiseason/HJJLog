@@ -56,4 +56,21 @@
     return nil;
 }
 
+//超出父视图坐标范围的子视图也能响应事件（tabBar 中间凸起）
+//- (UIView *)hitTest:(CGPoint)point withEvent:(UIEvent *)event {
+//    UIView *view = [super hitTest:point withEvent:event];
+//      if (view == nil) {
+//        for (UIView *subView in self.subviews) {
+//            CGPoint tp = [subView convertPoint:point fromView:self];
+//            if (CGRectContainsPoint(subView.bounds, tp)) {
+//                if ([subView isKindOfClass:[UIButton class]]) {
+//                     view = subView;
+//                  }
+//              }
+//          }
+//      }
+//     return view;
+//}
+
+
 @end

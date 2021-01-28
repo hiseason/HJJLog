@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		1D2DC8E125C2DFF100364BF7 /* JJSwift.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1D2DC8E025C2DFF100364BF7 /* JJSwift.swift */; };
 		1D54D44725BAE28C00380784 /* JJCategory.m in Sources */ = {isa = PBXBuildFile; fileRef = 1D54D44625BAE28C00380784 /* JJCategory.m */; };
 		1D54D44D25BAE90A00380784 /* JJProperty.m in Sources */ = {isa = PBXBuildFile; fileRef = 1D54D44C25BAE90A00380784 /* JJProperty.m */; };
 		1D54D45725BAEAB200380784 /* JJRunLoop.m in Sources */ = {isa = PBXBuildFile; fileRef = 1D54D45625BAEAB200380784 /* JJRunLoop.m */; };
@@ -49,6 +50,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		1D2DC8E025C2DFF100364BF7 /* JJSwift.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JJSwift.swift; sourceTree = "<group>"; };
 		1D54D44525BAE28C00380784 /* JJCategory.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JJCategory.h; sourceTree = "<group>"; };
 		1D54D44625BAE28C00380784 /* JJCategory.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JJCategory.m; sourceTree = "<group>"; };
 		1D54D44B25BAE90A00380784 /* JJProperty.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JJProperty.h; sourceTree = "<group>"; };
@@ -120,6 +122,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		1D2DC8DF25C2DFE200364BF7 /* Swift */ = {
+			isa = PBXGroup;
+			children = (
+				1D2DC8E025C2DFF100364BF7 /* JJSwift.swift */,
+			);
+			path = Swift;
+			sourceTree = "<group>";
+		};
 		1D54D45425BAEA8E00380784 /* MultiThread */ = {
 			isa = PBXGroup;
 			children = (
@@ -164,6 +174,7 @@
 		1DEDAC8925AD7ED4004AB77D /* HJJLog */ = {
 			isa = PBXGroup;
 			children = (
+				1D2DC8DF25C2DFE200364BF7 /* Swift */,
 				1D54D46C25BBE0B300380784 /* Algorithm */,
 				1D54D45425BAEA8E00380784 /* MultiThread */,
 				1DEDACD225AD892C004AB77D /* View */,
@@ -371,6 +382,7 @@
 				1DEDAC8C25AD7ED4004AB77D /* AppDelegate.m in Sources */,
 				1DEDACD525AD8943004AB77D /* JJView.m in Sources */,
 				1D600A9825BD864800D53E47 /* JJGCD.m in Sources */,
+				1D2DC8E125C2DFF100364BF7 /* JJSwift.swift in Sources */,
 				1DEDAC9D25AD7ED6004AB77D /* main.m in Sources */,
 				1D54D44D25BAE90A00380784 /* JJProperty.m in Sources */,
 				1D54D47B25BBE2FC00380784 /* JJKVO.m in Sources */,
