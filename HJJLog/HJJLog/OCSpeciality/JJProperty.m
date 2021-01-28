@@ -8,6 +8,10 @@
 #import "JJProperty.h"
 #import <objc/runtime.h>
 
+/*
+ atomic 保证“赋值和获取”是线程安全的，但不保证“操作和访问”是线程安全的，比如数组的添加和移除
+ */
+
 @interface JJProperty()
 //成员变量
 {

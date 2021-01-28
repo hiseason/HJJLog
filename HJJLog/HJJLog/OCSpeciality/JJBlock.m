@@ -19,6 +19,7 @@
  */
 
 #import "JJBlock.h"
+#import "JJView.h"
 
 //返回值（^名称)(形参类型) = ^(形参类型 形参名)(函数体)
 //int (^myBlock)(int) = ^(int a){ return a*2 }

@@ -16,6 +16,7 @@
 		1D54D48725BBFB6700380784 /* JJRuntime.m in Sources */ = {isa = PBXBuildFile; fileRef = 1D54D48625BBFB6700380784 /* JJRuntime.m */; };
 		1D600A9825BD864800D53E47 /* JJGCD.m in Sources */ = {isa = PBXBuildFile; fileRef = 1D600A9725BD864800D53E47 /* JJGCD.m */; };
 		1D600AA025BEEB6C00D53E47 /* JJUserCenter.m in Sources */ = {isa = PBXBuildFile; fileRef = 1D600A9F25BEEB6C00D53E47 /* JJUserCenter.m */; };
+		1D8354E625C25DFC00C11020 /* UIButton+JJCategory.m in Sources */ = {isa = PBXBuildFile; fileRef = 1D8354E525C25DFC00C11020 /* UIButton+JJCategory.m */; };
 		1DEDAC8C25AD7ED4004AB77D /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 1DEDAC8B25AD7ED4004AB77D /* AppDelegate.m */; };
 		1DEDAC8F25AD7ED4004AB77D /* SceneDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 1DEDAC8E25AD7ED4004AB77D /* SceneDelegate.m */; };
 		1DEDAC9225AD7ED4004AB77D /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1DEDAC9125AD7ED4004AB77D /* ViewController.m */; };
@@ -66,6 +67,8 @@
 		1D600A9725BD864800D53E47 /* JJGCD.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JJGCD.m; sourceTree = "<group>"; };
 		1D600A9E25BEEB6C00D53E47 /* JJUserCenter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JJUserCenter.h; sourceTree = "<group>"; };
 		1D600A9F25BEEB6C00D53E47 /* JJUserCenter.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JJUserCenter.m; sourceTree = "<group>"; };
+		1D8354E425C25DFC00C11020 /* UIButton+JJCategory.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UIButton+JJCategory.h"; sourceTree = "<group>"; };
+		1D8354E525C25DFC00C11020 /* UIButton+JJCategory.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "UIButton+JJCategory.m"; sourceTree = "<group>"; };
 		1DEDAC8725AD7ED4004AB77D /* HJJLog.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = HJJLog.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		1DEDAC8A25AD7ED4004AB77D /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		1DEDAC8B25AD7ED4004AB77D /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
@@ -225,6 +228,8 @@
 				1DEDACD425AD8943004AB77D /* JJView.m */,
 				1DEDACE225ADA7AA004AB77D /* JJButton.h */,
 				1DEDACE325ADA7AA004AB77D /* JJButton.m */,
+				1D8354E425C25DFC00C11020 /* UIButton+JJCategory.h */,
+				1D8354E525C25DFC00C11020 /* UIButton+JJCategory.m */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -374,6 +379,7 @@
 				1D54D46F25BBE0C400380784 /* Algorithm.swift in Sources */,
 				1D600AA025BEEB6C00D53E47 /* JJUserCenter.m in Sources */,
 				1DEDACE425ADA7AA004AB77D /* JJButton.m in Sources */,
+				1D8354E625C25DFC00C11020 /* UIButton+JJCategory.m in Sources */,
 				1D54D45725BAEAB200380784 /* JJRunLoop.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
