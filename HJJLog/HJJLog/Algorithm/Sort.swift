@@ -8,7 +8,7 @@
 import Foundation
 
 
-class Algorithm: NSObject {
+class Sort: NSObject {
         
     @objc func execute() {
         let constArr = [3,8,-1,59,-7,-1,66,5,-26,100,25,1200,-12,83,66]
@@ -17,25 +17,83 @@ class Algorithm: NSObject {
         var bubbleArr = constArr
         bubbleSort(&bubbleArr)
         print("冒泡后: \(bubbleArr)")
-        
+
         var bubbleOptimizeArr = constArr
         bubbleSortOptimize(&bubbleOptimizeArr)
         print("优化后: \(bubbleOptimizeArr)")
-        
-        var quickArr = constArr
-        quickSort(&quickArr, left: 0, right: quickArr.count-1)
-        print("快排后: \(quickArr)")
-        
-        if let mergeArr = mergeSort(constArr) {
-            print("归并后: \(mergeArr)")
+//
+//        var quickArr = constArr
+//        quickSort(&quickArr, left: 0, right: quickArr.count-1)
+//        print("快排后: \(quickArr)")
+//
+//        if let mergeArr = mergeSort(constArr) {
+//            print("归并后: \(mergeArr)")
+//        }
+    }
+    
+}
+
+//MARK: 冒泡
+extension Sort {
+    
+    func bubbleSort<T:Comparable>(_ arr: inout [T]) {
+        for _ in 0..<arr.count {
+            for j in 1..<arr.count {
+                if arr[j] < arr[j-1] {
+                    arr.swapAt(j, j-1)
+                }
+            }
+        }
+    }
+    
+    func bubbleSortOptimize<T:Comparable>(_ arr: inout [T]) {
+        for i in 0..<arr.count {
+            for j in 1..<arr.count - i {
+                if arr[j] < arr[j-1] {
+                    arr.swapAt(j, j-1)
+                }
+            }
+
         }
     }
     
 }
 
+extension Sort {
+    func findMaxList() {
+        var arr = [1,2,5,6,2,6,3,9,6,7,8]
+        var arrGroup = [[Int]]()
+        var groupIndex = 0
+        for i in 1..<arr.count-1 {
+            if arr[i-1] < arr[i] {
+                arrGroup[groupIndex].append(arr[i-1])
+            }else {
+                arrGroup[groupIndex].append(arr[i-1])
+                groupIndex += 1
+            }
+        }
 
+        var maxIndex = 0
+        for i in 0..<arrGroup.count {
+            for j in 0..<arrGroup.count {
+               var leftCount = arrGroup[j].count
+               var rightCount = arrGroup[j+1].count
+               if leftCount < rightCount {
+                   maxIndex = j+1
+               }else {
+                   maxIndex = j
+               }
+            }
+        }
+
+        var maxArr = arrGroup[maxIndex]
+    }
+}
+
+
+/*
 //MARK: 归并
-extension Algorithm {
+extension Sort {
     
     func mergeSort<T: Comparable>(_ arr: [T]) -> [T]? {
         var tempArr = [[T]]()
@@ -90,7 +148,7 @@ extension Algorithm {
 
 
 //MARK: 快排
-extension Algorithm {
+extension Sort {
     
     func quickSort<T: Comparable>(_ arr: inout [T], left: Int, right: Int) {
         if left < right {
@@ -131,7 +189,7 @@ extension Algorithm {
 
 
 //MARK: 冒泡
-extension Algorithm {
+extension Sort {
     
     //普通冒泡
     func bubbleSort<T: Comparable>(_ arr: inout [T]) {
@@ -157,3 +215,5 @@ extension Algorithm {
     }
     
 }
+
+ */

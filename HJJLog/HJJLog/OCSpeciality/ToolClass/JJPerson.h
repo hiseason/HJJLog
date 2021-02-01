@@ -1,17 +1,15 @@
 //
-//  JJRuntime.h
+//  JJPerson.h
 //  HJJLog
 //
-//  Created by 郝旭姗 on 2021/1/23.
+//  Created by 郝旭姗 on 2021/1/31.
 //
 
 #import <Foundation/Foundation.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface JJRuntime : NSObject
-
-+ (void)metaClass;
+@interface JJPerson : NSObject
 
 @end
 

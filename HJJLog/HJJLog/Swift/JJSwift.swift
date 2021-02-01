@@ -20,7 +20,7 @@ class Person: NSObject {
     }
 }
 
-class ViewController: UIViewController {
+class PersonController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()

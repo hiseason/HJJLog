@@ -7,6 +7,8 @@
 
 #import "JJRuntime.h"
 #import <objc/runtime.h>
+#import "JJAnimal.h"
+#import "JJPerson.h"
 
 /*
  1.类对象与元类对象
@@ -113,6 +115,16 @@
 @end
 
 @implementation JJRuntime
+
++ (void)metaClass {
+    Class pClass = object_getClass([JJPerson alloc]);
+    //JJPerson 根元类
+    Class pMetaClass = object_getClass(JJPerson.class);
+    
+    NSLog(@"pClass: %p \n",pClass);
+    NSLog(@"pMetaClass: %p",pMetaClass);
+    
+}
 
 #pragma mark - 获取方法列表
 - (NSString *)getClassNameList {
