@@ -21,81 +21,23 @@ class Sort: NSObject {
         var bubbleOptimizeArr = constArr
         bubbleSortOptimize(&bubbleOptimizeArr)
         print("优化后: \(bubbleOptimizeArr)")
-//
-//        var quickArr = constArr
-//        quickSort(&quickArr, left: 0, right: quickArr.count-1)
-//        print("快排后: \(quickArr)")
-//
-//        if let mergeArr = mergeSort(constArr) {
-//            print("归并后: \(mergeArr)")
-//        }
-    }
-    
-}
 
-//MARK: 冒泡
-extension Sort {
-    
-    func bubbleSort<T:Comparable>(_ arr: inout [T]) {
-        for _ in 0..<arr.count {
-            for j in 1..<arr.count {
-                if arr[j] < arr[j-1] {
-                    arr.swapAt(j, j-1)
-                }
-            }
-        }
-    }
-    
-    func bubbleSortOptimize<T:Comparable>(_ arr: inout [T]) {
-        for i in 0..<arr.count {
-            for j in 1..<arr.count - i {
-                if arr[j] < arr[j-1] {
-                    arr.swapAt(j, j-1)
-                }
-            }
+        var quickArr = constArr//[6,1,2,5,9,3,4,7,10,8]
+        quickSort(&quickArr, left: 0, right: quickArr.count-1)
+        print("快排后: \(quickArr)")
 
+        if let mergeArr = mergeSort(constArr) {
+            print("归并后: \(mergeArr)")
         }
     }
     
 }
 
-extension Sort {
-    func findMaxList() {
-        var arr = [1,2,5,6,2,6,3,9,6,7,8]
-        var arrGroup = [[Int]]()
-        var groupIndex = 0
-        for i in 1..<arr.count-1 {
-            if arr[i-1] < arr[i] {
-                arrGroup[groupIndex].append(arr[i-1])
-            }else {
-                arrGroup[groupIndex].append(arr[i-1])
-                groupIndex += 1
-            }
-        }
-
-        var maxIndex = 0
-        for i in 0..<arrGroup.count {
-            for j in 0..<arrGroup.count {
-               var leftCount = arrGroup[j].count
-               var rightCount = arrGroup[j+1].count
-               if leftCount < rightCount {
-                   maxIndex = j+1
-               }else {
-                   maxIndex = j
-               }
-            }
-        }
-
-        var maxArr = arrGroup[maxIndex]
-    }
-}
 
 
-/*
 //MARK: 归并
 extension Sort {
-    
-    func mergeSort<T: Comparable>(_ arr: [T]) -> [T]? {
+    func mergeSort<T:Comparable>(_ arr: [T]) -> [T]? {
         var tempArr = [[T]]()
         for item in arr {
             let subArr = [item]
@@ -114,13 +56,11 @@ extension Sort {
         return tempArr.first
     }
     
-    
-    func mergeArr<T: Comparable>(leftArr: [T],rightArr: [T]) -> [T] {
+    func mergeArr<T:Comparable>(leftArr: [T], rightArr: [T]) -> [T] {
         var mergeArr = [T]()
         mergeArr.reserveCapacity(leftArr.count + rightArr.count)
         var i = 0
         var j = 0
-        
         while i < leftArr.count && j < rightArr.count {
             if leftArr[i] < rightArr[j] {
                 mergeArr.append(leftArr[i])
@@ -131,6 +71,8 @@ extension Sort {
             }
         }
         
+        //把剩下的按序归位
+        //两段 while 只有一个会执行
         while i < leftArr.count {
             mergeArr.append(leftArr[i])
             i += 1
@@ -141,6 +83,7 @@ extension Sort {
             j += 1
         }
         
+        print("mergeArr: \(mergeArr)")
         return mergeArr
     }
     
@@ -149,8 +92,7 @@ extension Sort {
 
 //MARK: 快排
 extension Sort {
-    
-    func quickSort<T: Comparable>(_ arr: inout [T], left: Int, right: Int) {
+    func quickSort<T:Comparable>(_ arr: inout [T], left: Int, right: Int) {
         if left < right {
             let p = partition(&arr, left: left, right: right)
             quickSort(&arr, left: 0, right: p-1)
@@ -158,12 +100,13 @@ extension Sort {
         }
     }
     
-    func partition<T: Comparable>(_ arr: inout [T], left: Int, right: Int) -> Int {
+    func partition<T:Comparable>(_ arr: inout [T], left: Int, right: Int) -> Int {
         let pivot = arr[left]
         var i = left
         var j = right
         
         while i != j {
+            //循环找到右边比 pivot 小的
             while i < j && arr[j] >= pivot {
                 j -= 1
             }
@@ -172,14 +115,15 @@ extension Sort {
                 i += 1
             }
             
+            //左边找到大数,右边找到小数,两个条件都满足才能走到这
             if (i < j) {
                 arr.swapAt(i, j)
             }
         }
         
-        //相遇位置交换到起始位
+        //交换 left 和相遇位 i/j(现在 i == j)
+        //pivot 相当于 temp
         arr[left] = arr[i]
-        //基准数归位
         arr[i] = pivot
         
         return i
@@ -187,33 +131,35 @@ extension Sort {
     
 }
 
-
 //MARK: 冒泡
 extension Sort {
-    
-    //普通冒泡
-    func bubbleSort<T: Comparable>(_ arr: inout [T]) {
+    func bubbleSort<T:Comparable>(_ arr: inout [T]) {
         for _ in 0..<arr.count {
             for j in 1..<arr.count {
                 if arr[j] < arr[j-1] {
                     arr.swapAt(j, j-1)
+                    print("\(arr)")
                 }
             }
         }
     }
     
-    
-    //冒泡优化
-    func bubbleSortOptimize<T: Comparable>(_ arr: inout [T]) {
+    func bubbleSortOptimize<T:Comparable>(_ arr: inout [T]) {
+        var change = false
         for i in 0..<arr.count {
             for j in 1..<arr.count-i {
-                if arr[j] < arr[j-1] {
-                    arr.swapAt(j, j-1)
+                if arr[j-1] > arr[j] {
+                    arr.swapAt(j-1, j)
+                    change = true
                 }
             }
+            if !change {
+                break
+            }
+            print("\(arr)")
         }
     }
     
 }
 
- */
+
