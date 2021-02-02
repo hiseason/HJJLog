@@ -23,17 +23,10 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-<<<<<<< Updated upstream
     [[Sort new] execute];
 //    [JJRuntime metaClass];
+//    [JJBlock catchVariable];
     
-    
-}
-=======
-    [JJBlock catchVariable];
-//    [JJRuntime metaClass];
->>>>>>> Stashed changes
-
 }
 
 
