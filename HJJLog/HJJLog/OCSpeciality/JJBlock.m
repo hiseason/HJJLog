@@ -21,20 +21,74 @@
 #import "JJBlock.h"
 #import "JJView.h"
 
-//返回值（^名称)(形参类型) = ^(形参类型 形参名)(函数体)
-//int (^myBlock)(int) = ^(int a){ return a*2 }
-typedef int (^myBlock)(int); //block 前半部分
+int gloablA = 10;
+static int staticGloablA = 10;
 
 @interface JJBlock()
-
-@property (nonatomic,copy) int (^myBlock)(int a); //block 前半部分+参数名称
-@property (nonatomic,copy) myBlock calculateCallback; //blockName + block 作为属性的名称
-
-- (void)updateValue:(myBlock)callback;
-//-(void)updateBValue:(int)b a:(int(^)(int))myBlock {} //block 前半部分 blockName 提取到括号外面
 
 @end
 
 @implementation JJBlock
+
+#pragma mark - 捕获变量
++ (void)catchVariable {
+    int a = 10;
+    void (^block)(void) = ^{
+        //a = 15;
+        //Variable is not assignable (missing __block type specifier)
+        NSLog(@"intA: %d",a);
+    };
+    a = 20;
+    block();
+    //基本类型捕获值 10
+    
+    static int staticA = 10;
+    void (^block2)(void) = ^{
+        NSLog(@"staticA: %d",staticA);
+    };
+    staticA = 20;
+    block2();
+    //静态局部变量捕获指针 20
+    
+    void (^block3)(void) = ^{
+        NSLog(@"staticA: %d",gloablA);
+    };
+    gloablA = 20;
+    block3();
+
+    void (^block4)(void) = ^{
+        NSLog(@"staticGloablA: %d",staticGloablA);
+    };
+    staticGloablA = 20;
+    block4();
+    //全局变量不捕获 20
+    
+    NSString *str = @"10";
+    void (^block5)(void) = ^{
+        NSLog(@"str: %@",str);
+    };
+    str = @"20";
+    block5();
+    //对象类型捕获值 10
+    
+    __block int underlineBlockA = 10;
+    void (^block6)(void) = ^{
+        NSLog(@"underlineBlockA: %d",underlineBlockA);
+        underlineBlockA = 15;
+        NSLog(@"underlineBlockA changed: %d",underlineBlockA);
+
+    };
+    underlineBlockA = 20;
+    block6();
+    //__block 捕获指针 20
+    //__block 使 block 内部允许修改外部变量
+    
+}
+
+
+- (void)updateValue:(blockName)callback {
+    
+}
+
 
 @end

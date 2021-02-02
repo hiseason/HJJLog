@@ -10,6 +10,7 @@
 #import "JJGCD.h"
 #import "HJJLog-Swift.h"
 #import "JJRuntime.h"
+#import "JJBlock.h"
 
 @interface ViewController ()
 @property (nonatomic, strong) NSString *string;
@@ -22,17 +23,17 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
+<<<<<<< Updated upstream
     [[Sort new] execute];
 //    [JJRuntime metaClass];
     
     
 }
+=======
+    [JJBlock catchVariable];
+//    [JJRuntime metaClass];
+>>>>>>> Stashed changes
 
-- (NSInteger)abc: (NSInteger)a {
-    self.count += 1;
-    if (a <= 2) return 1;
-    NSInteger result = [self abc:a-1] + [self abc:a-2];
-    return result;
 }
 
 
