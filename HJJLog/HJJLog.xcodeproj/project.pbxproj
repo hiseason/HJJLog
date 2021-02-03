@@ -19,6 +19,7 @@
 		1D54D48725BBFB6700380784 /* JJRuntime.m in Sources */ = {isa = PBXBuildFile; fileRef = 1D54D48625BBFB6700380784 /* JJRuntime.m */; };
 		1D600A9825BD864800D53E47 /* JJGCD.m in Sources */ = {isa = PBXBuildFile; fileRef = 1D600A9725BD864800D53E47 /* JJGCD.m */; };
 		1D600AA025BEEB6C00D53E47 /* JJUserCenter.m in Sources */ = {isa = PBXBuildFile; fileRef = 1D600A9F25BEEB6C00D53E47 /* JJUserCenter.m */; };
+		1D66F59025CA459500604F8D /* Compare.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1D66F58F25CA459500604F8D /* Compare.swift */; };
 		1D8354E625C25DFC00C11020 /* UIButton+JJCategory.m in Sources */ = {isa = PBXBuildFile; fileRef = 1D8354E525C25DFC00C11020 /* UIButton+JJCategory.m */; };
 		1DB1CAE425C3F1E90088A88D /* Reserve.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1DB1CAE325C3F1E90088A88D /* Reserve.swift */; };
 		1DEDAC8C25AD7ED4004AB77D /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 1DEDAC8B25AD7ED4004AB77D /* AppDelegate.m */; };
@@ -77,6 +78,7 @@
 		1D600A9725BD864800D53E47 /* JJGCD.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JJGCD.m; sourceTree = "<group>"; };
 		1D600A9E25BEEB6C00D53E47 /* JJUserCenter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JJUserCenter.h; sourceTree = "<group>"; };
 		1D600A9F25BEEB6C00D53E47 /* JJUserCenter.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JJUserCenter.m; sourceTree = "<group>"; };
+		1D66F58F25CA459500604F8D /* Compare.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Compare.swift; sourceTree = "<group>"; };
 		1D8354E425C25DFC00C11020 /* UIButton+JJCategory.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UIButton+JJCategory.h"; sourceTree = "<group>"; };
 		1D8354E525C25DFC00C11020 /* UIButton+JJCategory.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "UIButton+JJCategory.m"; sourceTree = "<group>"; };
 		1DB1CAE325C3F1E90088A88D /* Reserve.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Reserve.swift; sourceTree = "<group>"; };
@@ -169,6 +171,7 @@
 			children = (
 				1D54D46E25BBE0C400380784 /* Sort.swift */,
 				1DB1CAE325C3F1E90088A88D /* Reserve.swift */,
+				1D66F58F25CA459500604F8D /* Compare.swift */,
 				2B3758DB25C9563500A96BB9 /* Judge.swift */,
 			);
 			path = Algorithm;
@@ -410,6 +413,7 @@
 				1D600A9825BD864800D53E47 /* JJGCD.m in Sources */,
 				2B3758DC25C9563500A96BB9 /* Judge.swift in Sources */,
 				1D2DC8E125C2DFF100364BF7 /* JJSwift.swift in Sources */,
+				1D66F59025CA459500604F8D /* Compare.swift in Sources */,
 				1DEDAC9D25AD7ED6004AB77D /* main.m in Sources */,
 				1D54D44D25BAE90A00380784 /* JJProperty.m in Sources */,
 				1D54D47B25BBE2FC00380784 /* JJKVO.m in Sources */,

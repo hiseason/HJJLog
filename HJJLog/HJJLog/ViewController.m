@@ -29,7 +29,8 @@
 //    [[Sort new] execute];
 //    [JJRuntime metaClass];
 //    [JJBlock catchVariable];
-    [[JJGCD new] executeGCDBasic];
+//    [[JJGCD new] executeGCDBasic];
+    [Compare execute];
     
 }
 
