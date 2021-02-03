@@ -60,7 +60,6 @@
         self.array = [NSMutableArray array]; //✅ atomic 保证赋值操作的线程安全
         [self.array addObject: @"atomic"]; //❌ atomic 不保证使用操作的线程安全
         self.lock = [[NSLock alloc] init];
-        [self concurrentQueueSyncNest];
     }
     return self;
 }
@@ -164,13 +163,17 @@
     });
 }
 
-
 - (void)printLog {
     NSLog(@"2");
 }
 
-
 #pragma mark - 基础操作
+- (void)executeGCDBasic {
+//    [self serialQueueSync];
+    [self concurrentQueueSync];
+    [self serialQueueAsync];
+}
+
 //串行队列同步执行
 - (void)serialQueueSync {
     dispatch_queue_t serialQueue = dispatch_queue_create("serial_queue", DISPATCH_QUEUE_SERIAL);
@@ -179,7 +182,7 @@
         //串行队列: 执行完一个任务, GCD 才会取下一个任务
         dispatch_sync(serialQueue, ^{
             sleep(1);
-            NSLog(@"%@ 执行任务%d current theard:%@",[NSDate date],i,[NSThread currentThread]);
+            NSLog(@"%@ 串行队列同步执行任务 **%d** current theard:%@",[NSDate date],i,[NSThread currentThread]);
         });
     }
 }
@@ -192,7 +195,7 @@
         //并发队列: GCD 取完一个任务,会立即取下一个任务放到另一个线程, 但是同步执行不会开线程,所以只有一条线程, 同一时间只会有一个打印
         dispatch_sync(concurrentQueue, ^{
             sleep(1);
-            NSLog(@"%@ 执行任务%d current theard:%@",[NSDate date],i,[NSThread currentThread]);
+            NSLog(@"%@ 并发队列同步执行任务 **%d** current theard:%@",[NSDate date],i,[NSThread currentThread]);
         });
     }
 }
@@ -205,7 +208,7 @@
         //串行队列: 任务一个一个执行, 按序输出, 所以是"一个"新线程
         dispatch_async(serialQueue, ^{
             sleep(1);
-            NSLog(@"%@ 执行任务%d current theard:%@",[NSDate date],i,[NSThread currentThread]);
+            NSLog(@"%@ 串行并列异步执行任务%d current theard:%@",[NSDate date],i,[NSThread currentThread]);
         });
     }
 }
@@ -222,7 +225,5 @@
         });
     }
 }
-
-
 
 @end

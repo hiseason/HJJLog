@@ -6,11 +6,13 @@
 //
 
 #import "ViewController.h"
+#import "HJJLog-Swift.h"
 #import "JJKVO.h"
 #import "JJGCD.h"
-#import "HJJLog-Swift.h"
 #import "JJRuntime.h"
 #import "JJBlock.h"
+
+
 
 @interface ViewController ()
 @property (nonatomic, strong) NSString *string;
@@ -23,9 +25,11 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-    [[Sort new] execute];
+//    [[Reserve new] execute];
+//    [[Sort new] execute];
 //    [JJRuntime metaClass];
 //    [JJBlock catchVariable];
+    [[JJGCD new] executeGCDBasic];
     
 }
 
