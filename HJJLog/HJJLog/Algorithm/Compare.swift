@@ -19,7 +19,7 @@ class Compare: NSObject {
 extension Compare {
     func maxSubArray(_ nums: inout [Int]) {
         //边界条件判断，当i等于0的时候，也就是前1个元素，他能构成的最大和也就是他自己，所以
-        var ans = nums[0]
+        var result = nums[0]
         var sum : Int = 0
         //如果 num 小于0，我们直接把前面的舍弃，也就是说重新开始计算，否则会越加越小的，直接让dp[i]=num[i]
         for num in nums {
@@ -28,9 +28,9 @@ extension Compare {
            }else{
                sum = num
            }
-           ans = max(ans, sum)
-            print("ans:\(ans) --- sum:\(sum)")
+            result = max(result, sum)
+            print("ans:\(result) --- sum:\(sum)")
         }
-        print(ans)
+        print(result)
     }
 }

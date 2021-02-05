@@ -47,19 +47,24 @@ public class ListNode {
 
 extension Reserve {
     func reverseList(_ head: ListNode?) -> ListNode? {
-      if head == nil || head?.next == nil {
-          return head
-      }
-
-       var newHead: ListNode?
-       //保存 p 节点
-       var p = head
-       while p != nil {
-          let tmp = p?.next
-          p?.next = newHead
-          newHead = p
-          p = tmp
-       }
-      return newHead
+        if head == nil || head?.next == nil {
+            return head
+        }
+        
+        var p = head
+        //newHead 是 "头指针"
+        var newHead: ListNode?
+        
+        while p != nil {
+            //记录下一个节点
+            let tmp = p?.next
+            //当前节点的 next 指向新链表的头部
+            p?.next = newHead
+            //更改新链表的头部为当前节点
+            newHead = p
+            //移动 p 指针
+            p = tmp
+        }
+        return newHead
     }
 }
