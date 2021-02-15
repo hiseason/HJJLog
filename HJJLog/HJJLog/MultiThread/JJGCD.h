@@ -11,7 +11,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface JJGCD : NSObject
 
-- (void)executeGCDBasic;
++ (void)execute;
 
 @end
 

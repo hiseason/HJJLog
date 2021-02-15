@@ -12,6 +12,7 @@
 #import "JJRuntime.h"
 #import "JJBlock.h"
 
+#import "UIButton+HitRect.h"
 
 
 @interface ViewController ()
@@ -29,9 +30,19 @@
 //    [[Sort new] execute];
 //    [JJRuntime metaClass];
 //    [JJBlock catchVariable];
-//    [[JJGCD new] executeGCDBasic];
-    [Compare execute];
+//    [Compare execute];
+//    [JJGCD execute];
     
+    UIButton *btn = [[UIButton alloc] initWithFrame:CGRectMake(0, 60, 100, 100)];
+    btn.backgroundColor = [UIColor redColor];
+    btn.hitTestEdgeInsets = UIEdgeInsetsMake(-30, -30, -30, -30);
+    [btn addTarget:self action:@selector(btnAction) forControlEvents:UIControlEventTouchUpInside];
+    [self.view addSubview:btn];
+
+}
+
+- (void)btnAction{
+    NSLog(@"click");
 }
 
 

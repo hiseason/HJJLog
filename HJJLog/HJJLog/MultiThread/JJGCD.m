@@ -48,9 +48,9 @@
 
 @interface JJGCD()
 
-@property(atomic) NSMutableArray *array;
+@property(nonatomic, strong) NSMutableArray *array;
 @property(nonatomic, strong) NSLock *lock;
-
+@property(nonatomic, strong) dispatch_queue_t readWriteQueue;
 @end
 
 @implementation JJGCD
@@ -58,10 +58,19 @@
 - (instancetype)init {
     if (self = [super init]) {
         self.array = [NSMutableArray array]; //✅ atomic 保证赋值操作的线程安全
-        [self.array addObject: @"atomic"]; //❌ atomic 不保证使用操作的线程安全
+        //[self.array addObject: @"atomic"]; //❌ atomic 不保证使用操作的线程安全
         self.lock = [[NSLock alloc] init];
+        
+        self.readWriteQueue = dispatch_queue_create("readWrite", DISPATCH_QUEUE_CONCURRENT);
     }
     return self;
+}
+
++ (void)execute {
+    JJGCD *gcd = [[JJGCD alloc] init];
+//    [gcd executeBarrierAsync];
+    [gcd readWrite];
+    [gcd gcdSemaphore];
 }
 
 #pragma mark - 锁
@@ -111,6 +120,122 @@
 //        }];
     });
 }
+
+- (void)gcdSemaphore {
+    dispatch_queue_t workConcurrentQueue = dispatch_queue_create("cccccccc", DISPATCH_QUEUE_CONCURRENT);
+    dispatch_queue_t serialQueue = dispatch_queue_create("sssssssss",DISPATCH_QUEUE_SERIAL);
+    dispatch_semaphore_t semaphore = dispatch_semaphore_create(3);
+
+    for (NSInteger i = 0; i < 10; i++) {
+      dispatch_async(serialQueue, ^{
+          dispatch_semaphore_wait(semaphore, DISPATCH_TIME_FOREVER);
+          dispatch_async(workConcurrentQueue, ^{
+              NSLog(@"thread-info:%@开始执行任务%d",[NSThread currentThread],(int)i);
+              sleep(1);
+              NSLog(@"thread-info:%@结束执行任务%d",[NSThread currentThread],(int)i);
+              dispatch_semaphore_signal(semaphore);});
+      });
+    }
+    NSLog(@"主线程...!");
+}
+
+
+#pragma mark - 多读单写
+- (void)readWrite {
+    [self write:@"1" sleep:3.0];
+    [self read];
+    [self write:@"2" sleep:1.0];
+    [self read];
+    [self read];
+    [self write:@"3" sleep:0.0];
+    [self read];
+}
+
+- (void)read {
+    dispatch_async(self.readWriteQueue, ^{
+        NSLog(@"读 array: %@",self.array);
+    });
+}
+
+- (void)write: (NSString *)str sleep:(double)time {
+    NSLog(@"array: %@",self.array);
+    dispatch_barrier_async(self.readWriteQueue, ^{
+        [NSThread sleepForTimeInterval:time];              // 模拟耗时操作
+        [self.array addObject:str];
+        NSLog(@"array: %@  thread:%@",self.array,[NSThread currentThread]);
+    });
+
+}
+
+#pragma mark - barrier
+/*
+ * 特点：
+ * 1.barrier之前的任务并发执行，barrier之后的任务在barrier任务完成之后并发执行
+ * 2.会开启新线程执行任务
+ * 3.不会阻塞当前线程（主线程）
+ */
+- (void)executeBarrierAsync {
+    dispatch_queue_t concurrentQueue = dispatch_queue_create("concurrent_queue",DISPATCH_QUEUE_CONCURRENT);
+
+    NSLog(@"CurrentThread---%@",[NSThread currentThread]);  // 打印当前线程
+    NSLog(@"---begin---");
+    
+    NSLog(@"追加任务1");
+    dispatch_async(concurrentQueue, ^{
+        // 追加任务1
+        for (int i = 0; i < 2; ++i) {
+            [NSThread sleepForTimeInterval:2];              // 模拟耗时操作
+            NSLog(@"1---%@",[NSThread currentThread]);      // 打印当前线程
+        }
+    });
+    
+    NSLog(@"追加任务2");
+    dispatch_async(concurrentQueue, ^{
+        // 追加任务2
+        for (int i = 0; i < 2; ++i) {
+            [NSThread sleepForTimeInterval:2];              // 模拟耗时操作
+            NSLog(@"2---%@",[NSThread currentThread]);      // 打印当前线程
+        }
+    });
+    
+    NSLog(@"追加barrier_async任务");
+    dispatch_barrier_sync(concurrentQueue, ^{
+        // 追加barrier任务
+        for (int i = 0; i < 2; ++i) {
+            [NSThread sleepForTimeInterval:2];              // 模拟耗时操作
+            NSLog(@"barrier---%@",[NSThread currentThread]);      // 打印当前线程
+        }
+    });
+    /*
+     barrier_sync会阻塞它之后的任务的入队，必须等到barrier_sync任务执行完毕，才会把后面的异步任务添加到并发队列中，而barrier_async不需要等自身的block执行完成，就可以把后面的任务添加到队列中。
+     */
+    
+    NSLog(@"追加任务3");
+    dispatch_async(concurrentQueue, ^{
+        // 追加任务3
+        for (int i = 0; i < 2; ++i) {
+            [NSThread sleepForTimeInterval:2];              // 模拟耗时操作
+            NSLog(@"3---%@",[NSThread currentThread]);      // 打印当前线程
+        }
+    });
+    
+    NSLog(@"追加任务4");
+    dispatch_async(concurrentQueue, ^{
+        // 追加任务4
+        for (int i = 0; i < 2; ++i) {
+            [NSThread sleepForTimeInterval:2];              // 模拟耗时操作
+            NSLog(@"4---%@",[NSThread currentThread]);      // 打印当前线程
+        }
+    });
+    
+    NSLog(@"---end---");
+    NSLog(@"*********************************************************");
+}
+
+//作者：左耳钉zed
+//链接：https://juejin.cn/post/6844903833831735310
+//来源：掘金
+//著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。
 
 
 #pragma mark - 多线程高级考察
