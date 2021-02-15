@@ -11,9 +11,8 @@
 #import "JJGCD.h"
 #import "JJRuntime.h"
 #import "JJBlock.h"
-
 #import "UIButton+HitRect.h"
-
+#import <Masonry/Masonry.h>
 
 @interface ViewController ()
 @property (nonatomic, strong) NSString *string;
@@ -38,6 +37,10 @@
     btn.hitTestEdgeInsets = UIEdgeInsetsMake(-30, -30, -30, -30);
     [btn addTarget:self action:@selector(btnAction) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:btn];
+    [btn mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.left.equalTo(self.view);
+    }];
+    
 
 }
 

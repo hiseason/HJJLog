@@ -116,6 +116,40 @@
 
 @implementation JJRuntime
 
+#pragma mark - 消息传递机制
++ (BOOL)resolveInstanceMethod:(SEL)sel{
+    if (sel == @selector(test)) {
+        
+        NSLog(@"resolveInstanceMethod:");
+        return NO;
+    }
+    return [super resolveInstanceMethod:sel];
+}
+
+- (id)forwardingTargetForSelector:(SEL)aSelector{
+    if (aSelector == @selector(test)) {
+        NSLog(@"forwardingTargetForSelector:");
+        return nil;
+    }
+    
+    return [super forwardingTargetForSelector:aSelector];
+}
+
+- (NSMethodSignature *)methodSignatureForSelector:(SEL)aSelector{
+    
+    if (aSelector == @selector(test)) {
+        NSLog(@"methodSignatureForSelector:");
+        return [NSMethodSignature signatureWithObjCTypes:"v@:"];
+    }
+    
+    return [super methodSignatureForSelector:aSelector];
+}
+
+- (void)forwardInvocation:(NSInvocation *)anInvocation{
+    NSLog(@"forwardInvocation:");
+}
+
+#pragma mark - 元类、根元类
 + (void)metaClass {
     Class pClass = object_getClass([JJPerson alloc]);
     //JJPerson 根元类

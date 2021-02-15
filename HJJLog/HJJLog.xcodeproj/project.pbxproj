@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 50;
+	objectVersion = 51;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -162,7 +162,6 @@
 				1E9A1FAE2DCB9116AD5DC76E /* Pods-HJJLogTests.debug.xcconfig */,
 				DCD7BDB6D6CEB29CA0724C0A /* Pods-HJJLogTests.release.xcconfig */,
 			);
-			name = Pods;
 			path = Pods;
 			sourceTree = "<group>";
 		};
@@ -234,7 +233,6 @@
 		1DEDAC8925AD7ED4004AB77D /* HJJLog */ = {
 			isa = PBXGroup;
 			children = (
-				1DF817B925DA5DF500520872 /* Category */,
 				1D54D46C25BBE0B300380784 /* Algorithm */,
 				1D2DC8DF25C2DFE200364BF7 /* Swift */,
 				1D54D45425BAEA8E00380784 /* MultiThread */,
@@ -278,6 +276,7 @@
 			isa = PBXGroup;
 			children = (
 				1D1D068525C6E5850045FEFF /* ToolClass */,
+				1DF817B925DA5DF500520872 /* Category */,
 				1D54D44B25BAE90A00380784 /* JJProperty.h */,
 				1D54D44C25BAE90A00380784 /* JJProperty.m */,
 				1D54D44525BAE28C00380784 /* JJCategory.h */,

@@ -11,6 +11,7 @@
 @interface JJKVO()
 
 @property (nonatomic, copy) NSString *name;
+@property (nonatomic, assign) int value;
 
 @end
 
@@ -22,6 +23,14 @@
     }
     return  self;
 }
+
+- (void)increase {
+    //直接为成员变量赋值
+    [self willChangeValueForKey:@"value"];
+    _value += 1;
+    [self didChangeValueForKey:@"value"];
+}
+
 
 #pragma mark - 应用场景
 - (void)uses {

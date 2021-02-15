@@ -12,6 +12,7 @@ NS_ASSUME_NONNULL_BEGIN
 @interface JJRuntime : NSObject
 
 + (void)metaClass;
+- (void)test;
 
 @end
 
