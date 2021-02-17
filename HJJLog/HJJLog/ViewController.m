@@ -11,6 +11,7 @@
 #import "JJGCD.h"
 #import "JJRuntime.h"
 #import "JJBlock.h"
+#import "JJLock.h"
 #import "UIButton+HitRect.h"
 #import <Masonry/Masonry.h>
 
@@ -30,7 +31,8 @@
 //    [JJRuntime metaClass];
 //    [JJBlock catchVariable];
 //    [Compare execute];
-    [JJGCD execute];
+//    [JJGCD execute];
+    [JJLock execute];
     
     UIButton *btn = [[UIButton alloc] initWithFrame:CGRectMake(0, 60, 100, 100)];
     btn.backgroundColor = [UIColor redColor];

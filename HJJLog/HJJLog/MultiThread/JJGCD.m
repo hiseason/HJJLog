@@ -9,6 +9,8 @@
  任务: 要做的操作, 即 GCD 中的 block
  队列: 存放任务的线性表, 遵循 FIFO (先进先出) 原则
  
+ 同步异步区别在于是否阻塞当前线程；串行并发区别在于是否按顺序执行任务
+ 
  同步/异步:
  区别在于是否会阻塞"当前"线程 (有几个入口)
  同步执行: 在当前线程执行任务, 当前 block 执行完毕后线程才会继续往下走,会阻塞当前线程;
@@ -71,7 +73,7 @@
 
 + (void)execute {
     JJGCD *gcd = [[JJGCD alloc] init];
-    [gcd serialQueueSyncAsync];
+    [gcd mainQueue2];
 //    [gcd executeBarrierAsync];
 //    [gcd readWrite];
 //    [gcd gcdSemaphore];
@@ -243,21 +245,77 @@
 
 
 #pragma mark - 多线程高级考察
+//主队列特点: 必须等待主线程中的任务执行完,再执行主队列中的任务
+- (void)mainQueue2 {
+    dispatch_queue_t mainQueue = dispatch_get_main_queue();
+    dispatch_sync(mainQueue, ^{//block1
+        NSLog(@"1");
+    });
+    NSLog(@"end");
+    //mainQueueSync 和 block1 相互等待
+}
+
+- (void)mainQueue {
+    dispatch_queue_t mainQueue = dispatch_get_main_queue();
+    dispatch_async(mainQueue, ^{
+        NSLog(@"1");
+    });
+    NSLog(@"end");
+}
+
+- (void)serialQueueAsyncSync {
+    NSLog(@"begin--%@",[NSThread currentThread]);
+    dispatch_queue_t serialQueue = dispatch_queue_create("serial_queue", DISPATCH_QUEUE_SERIAL);
+    dispatch_async(serialQueue, ^{//block1
+        NSLog(@"1--%@",[NSThread currentThread]);
+        dispatch_sync(serialQueue, ^{ //block2
+            NSLog(@"2--%@",[NSThread currentThread]);
+            //block2 等 block1 走完
+            //3 需要等 block2 走完
+        });
+        NSLog(@"3--%@",[NSThread currentThread]);
+    });
+    NSLog(@"end--%@",[NSThread currentThread]);
+}
+
+
+//碰到异步才可能切换线程
 - (void)serialQueueSyncAsync {
-    NSLog(@"begin");
+    NSLog(@"begin--%@",[NSThread currentThread]);
     dispatch_queue_t serialQueue = dispatch_queue_create("serial_queue", DISPATCH_QUEUE_SERIAL);
     dispatch_sync(serialQueue, ^{
         NSLog(@"1--%@",[NSThread currentThread]);
         dispatch_async(serialQueue, ^{
             NSLog(@"2--%@",[NSThread currentThread]);
         });
-        dispatch_async(serialQueue, ^{
+        //TODO: 为什么即使耗时了,2 还是会等 3,不在一个线程啊,3 在主线程,2 在子线程?????????
+        sleep(5);
+        NSLog(@"3--%@",[NSThread currentThread]);
+
+//        dispatch_async(serialQueue, ^{
+//            NSLog(@"3--%@",[NSThread currentThread]);
+//        });
+//        sleep(2);
+//        NSLog(@"4--%@",[NSThread currentThread]);
+    });
+    NSLog(@"end--%@",[NSThread currentThread]);
+}
+
+
+- (void)concurrentQueueSyncAsync {
+    NSLog(@"begin--%@",[NSThread currentThread]);
+    dispatch_queue_t concurrentQueue = dispatch_queue_create("concurrent_queue",DISPATCH_QUEUE_CONCURRENT);
+    dispatch_sync(concurrentQueue, ^{
+        NSLog(@"1--%@",[NSThread currentThread]);
+        dispatch_async(concurrentQueue, ^{
+            NSLog(@"2--%@",[NSThread currentThread]);
+        });
+        dispatch_async(concurrentQueue, ^{
             NSLog(@"3--%@",[NSThread currentThread]);
         });
-
         NSLog(@"4--%@",[NSThread currentThread]);
     });
-    NSLog(@"end");
+    NSLog(@"end--%@",[NSThread currentThread]);
 }
 
 //主队列同步执行
