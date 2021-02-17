@@ -10,15 +10,18 @@
  队列: 存放任务的线性表, 遵循 FIFO (先进先出) 原则
  
  同步/异步:
- 区别在于是否在当前线程执行/是否会阻塞"当前"线程 (有几个入口)
- 同步执行: 在当前线程执行任务, 当前 block 执行完毕后线程才会继续往下走;
- 异步执行: 会开辟其他线程执行任务, 当前线程会一直往下走,不会阻塞
+ 区别在于是否会阻塞"当前"线程 (有几个入口)
+ 同步执行: 在当前线程执行任务, 当前 block 执行完毕后线程才会继续往下走,会阻塞当前线程;
+ 异步执行: 不会阻塞当前线程(但是不一定会开辟线程)
  
  串行队列/并发队列
  区别在于任务是一个一个执行, 还是在多个线程同时进行 (排几个队)
- 串行并列中的任务, GCD 取出来一个,执行完了,再取下一个, 一定是按照开始的顺序结束;
+ 串行并列中的任务, 顺序执行, GCD 取出来一个,执行完了,再取下一个, 一定是按照开始的顺序结束;
  并发队列中的任务, GCD 取了一个放到一个线程, 接着就下一个放到另一个线程, 不一定会按照开始的顺序结束(前提是得有多个线程, 如果遇上同步, 那就一个线程, 也会按序进行)
  
+ 线程所占内存: 主线程(1M),子线程(512KB), 线程越多,cpu 在线程之前的调度效率变慢;多线程是为了提高用户体验, 太多时执行效率也会变慢,所以多线程 3-6 条最好
+ 串行队列异步执行,3个异步任务,串行队列肯定是按照顺序执行, 即使开辟了多个线程,任务也是一个一个执行,所以没有必要开辟多个线程
+
  https://juejin.cn/post/6844903566398717960
  */
 
@@ -68,9 +71,10 @@
 
 + (void)execute {
     JJGCD *gcd = [[JJGCD alloc] init];
+    [gcd serialQueueSyncAsync];
 //    [gcd executeBarrierAsync];
-    [gcd readWrite];
-    [gcd gcdSemaphore];
+//    [gcd readWrite];
+//    [gcd gcdSemaphore];
 }
 
 #pragma mark - 锁
@@ -239,6 +243,23 @@
 
 
 #pragma mark - 多线程高级考察
+- (void)serialQueueSyncAsync {
+    NSLog(@"begin");
+    dispatch_queue_t serialQueue = dispatch_queue_create("serial_queue", DISPATCH_QUEUE_SERIAL);
+    dispatch_sync(serialQueue, ^{
+        NSLog(@"1--%@",[NSThread currentThread]);
+        dispatch_async(serialQueue, ^{
+            NSLog(@"2--%@",[NSThread currentThread]);
+        });
+        dispatch_async(serialQueue, ^{
+            NSLog(@"3--%@",[NSThread currentThread]);
+        });
+
+        NSLog(@"4--%@",[NSThread currentThread]);
+    });
+    NSLog(@"end");
+}
+
 //主队列同步执行
 - (void)mainQueueSync {
     dispatch_queue_t mainQueue = dispatch_get_main_queue();

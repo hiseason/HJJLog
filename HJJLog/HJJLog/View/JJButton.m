@@ -9,7 +9,8 @@
 
 @implementation JJButton
 
-#pragma mark - 事件传递机制
+#pragma mark - UI事件传递
+// 什么时候调用:只要事件一传递给一个控件，那么这个控件就会调用自己的这个方法
 - (UIView *)hitTest:(CGPoint)point withEvent:(UIEvent *)event {
     if (!self.userInteractionEnabled ||
         [self isHidden] ||

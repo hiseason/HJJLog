@@ -30,7 +30,7 @@
 //    [JJRuntime metaClass];
 //    [JJBlock catchVariable];
 //    [Compare execute];
-//    [JJGCD execute];
+    [JJGCD execute];
     
     UIButton *btn = [[UIButton alloc] initWithFrame:CGRectMake(0, 60, 100, 100)];
     btn.backgroundColor = [UIColor redColor];

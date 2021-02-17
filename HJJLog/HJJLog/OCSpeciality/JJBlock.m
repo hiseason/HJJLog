@@ -83,6 +83,16 @@ static int staticGloablA = 10;
     //__block 捕获指针 20
     //__block 使 block 内部允许修改外部变量
     
+    __block NSString *underlineBlockS = @"10";
+    void (^block7)(void) = ^{
+        NSLog(@"underlineBlockS: %@",underlineBlockS);
+        underlineBlockS = @"15";
+        NSLog(@"underlineBlockS changed: %@",underlineBlockS);
+
+    };
+    underlineBlockS = @"20";
+    block7();
+
 }
 
 
