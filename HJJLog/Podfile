@@ -4,10 +4,16 @@
 target 'HJJLog' do
   # Comment the next line if you don't want to use dynamic frameworks
   use_frameworks!
+<<<<<<< Updated upstream
 
   # Pods for HJJLog
   pod 'SDWebImage'
   pod 'Masonry'
+=======
+  pod 'SDWebImage'
+
+  # Pods for HJJLog
+>>>>>>> Stashed changes
 
   target 'HJJLogTests' do
     inherit! :search_paths
