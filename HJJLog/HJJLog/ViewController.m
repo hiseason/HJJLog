@@ -42,8 +42,6 @@
     [btn mas_makeConstraints:^(MASConstraintMaker *make) {
         make.left.equalTo(self.view);
     }];
-    
-
 }
 
 - (void)btnAction{

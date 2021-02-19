@@ -1,41 +1,22 @@
 PODS:
-<<<<<<< Updated upstream
   - Masonry (1.1.0)
-  - SDWebImage (5.9.4):
-    - SDWebImage/Core (= 5.9.4)
-  - SDWebImage/Core (5.9.4)
-
-DEPENDENCIES:
-  - Masonry
-=======
   - SDWebImage (5.10.0):
     - SDWebImage/Core (= 5.10.0)
   - SDWebImage/Core (5.10.0)
 
 DEPENDENCIES:
->>>>>>> Stashed changes
+  - Masonry
   - SDWebImage
 
 SPEC REPOS:
   trunk:
-<<<<<<< Updated upstream
     - Masonry
     - SDWebImage
 
 SPEC CHECKSUMS:
   Masonry: 678fab65091a9290e40e2832a55e7ab731aad201
-  SDWebImage: b69257f4ab14e9b6a2ef53e910fdf914d8f757c1
-
-PODFILE CHECKSUM: 0486b4c6496abd5ffddb164ed647242f7e1886ac
-
-COCOAPODS: 1.10.0.rc.1
-=======
-    - SDWebImage
-
-SPEC CHECKSUMS:
   SDWebImage: 9169792e9eec3e45bba2a0c02f74bf8bd922d1ee
 
-PODFILE CHECKSUM: 483dd41499817c203fc5bca0593c98c5632afb1d
+PODFILE CHECKSUM: 9fabefa78358847efd42dd27f953ec7a3bf14f31
 
 COCOAPODS: 1.9.3
->>>>>>> Stashed changes

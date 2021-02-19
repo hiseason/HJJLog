@@ -6,247 +6,258 @@
 //
 
 /*
- 任务: 要做的操作, 即 GCD 中的 block
- 队列: 存放任务的线性表, 遵循 FIFO (先进先出) 原则
+ 任务: GCD 中的 block
+ 队列: "存放任务"的线性表, 遵循 FIFO (先进先出) 原则, 线程从队列中取任务
  
- 同步异步区别在于是否阻塞当前线程；串行并发区别在于是否按顺序执行任务
+ 同步异步区别在于"线程", 是否阻塞当前线程/是否切换线程/决定 block 是在主线程还是子线程执行
+ 串行并发区别在于"任务", 任务是否按序执行
+ 串行队列: 执行完一个任务, GCD 才会取下一个任务
+ 并发队列: GCD 取完一个任务,会立即取下一个任务放到另一个线程
  
- 同步/异步:
- 区别在于是否会阻塞"当前"线程 (有几个入口)
- 同步执行: 在当前线程执行任务, 当前 block 执行完毕后线程才会继续往下走,会阻塞当前线程;
- 异步执行: 不会阻塞当前线程(但是不一定会开辟线程)
+ 串行队列同步执行: 当前线程按序执行
+ 串行队列异步执行: 切换线程按序执行
+ 并发队列同步执行: 当前线程按序执行
+ 并发队列异步执行: 多个线程无序执行
  
- 串行队列/并发队列
- 区别在于任务是一个一个执行, 还是在多个线程同时进行 (排几个队)
- 串行并列中的任务, 顺序执行, GCD 取出来一个,执行完了,再取下一个, 一定是按照开始的顺序结束;
- 并发队列中的任务, GCD 取了一个放到一个线程, 接着就下一个放到另一个线程, 不一定会按照开始的顺序结束(前提是得有多个线程, 如果遇上同步, 那就一个线程, 也会按序进行)
- 
+ 串行队列异步执行,多个异步任务,串行队列决定了必定是按序执行, 即使开辟了多个线程,任务也是一个一个执行,所以没有必要开辟多个线程
+ 并发队列只有碰到异步,才能开线程多个任务同时执行
+ 串行队列同步 = 并发队列同步
  线程所占内存: 主线程(1M),子线程(512KB), 线程越多,cpu 在线程之前的调度效率变慢;多线程是为了提高用户体验, 太多时执行效率也会变慢,所以多线程 3-6 条最好
- 串行队列异步执行,3个异步任务,串行队列肯定是按照顺序执行, 即使开辟了多个线程,任务也是一个一个执行,所以没有必要开辟多个线程
-
- https://juejin.cn/post/6844903566398717960
- */
-
-/*
- NSOperation(AFNetworking SDWebImage)
- 1.任务执行状态控制 isReady isExecuting isFinished isCancelled
-   只重写main 方法, 底层控制任务状态
-   重写 start 方法, 自行控制任务状态
- 2.添加任务依赖
- 3.最大并发量
- NSOperation 对象在 Finished 后如何从 queue 中移除的
- 
- NSThread 实现常驻线程
- */
-
-/*
- @synchroniced 创建单例对象, 保证多线程环境下创建对象是单一的
- atomic 只保证赋值操作的线程安全性, 不保证使用操作的线程安全
- OSSpinLock 自旋锁, 循环等待询问, 不释放当前资源(一般的锁在第一次获取到后,后续线程是获取不到的,它会释放它当前的资源, OSSpinLock 不能获得锁,就会一直轮询,直到获得锁,类似while循环)
-            用于轻量级数据访问, 引用计数器 +1,-1
- NSLock
- NSRecursiveLock 递归锁, 解决递归方法在多线程中的调用问题
- dispatch_semaphore_t 信号量
  */
 
 #import "JJGCD.h"
 
 @interface JJGCD()
 
-@property(nonatomic, strong) NSMutableArray *array;
-@property(nonatomic, strong) NSLock *lock;
-@property(nonatomic, strong) dispatch_queue_t readWriteQueue;
 @end
+
 
 @implementation JJGCD
 
-- (instancetype)init {
-    if (self = [super init]) {
-        self.array = [NSMutableArray array]; //✅ atomic 保证赋值操作的线程安全
-        //[self.array addObject: @"atomic"]; //❌ atomic 不保证使用操作的线程安全
-        self.lock = [[NSLock alloc] init];
-        
-        self.readWriteQueue = dispatch_queue_create("readWrite", DISPATCH_QUEUE_CONCURRENT);
-    }
-    return self;
-}
-
 + (void)execute {
     JJGCD *gcd = [[JJGCD alloc] init];
-    [gcd mainQueue2];
-//    [gcd executeBarrierAsync];
-//    [gcd readWrite];
-//    [gcd gcdSemaphore];
+//    [gcd serialSync];
+//    [gcd serialAsync];
+//    [gcd concurrentSync];
+//    [gcd concurrentAsync];
+//    [gcd performSelector];
+//    [gcd mainAsnyc];
+    [gcd groupEnter];
 }
 
-#pragma mark - 锁
-- (void)methodA {
-    [self.lock lock];
-    [self methodB];
-    [self.lock unlock];
-}
-
-- (void)methodB {
-    [self.lock lock];
-    //操作逻辑
-    [self.lock unlock];
-}
-
-//执行两个异步的AFN网络请求，第二个网络请求需要等待第一个网络请求响应后再执行
+#pragma mark 执行完 A,B,C 再执行 D
+//异步并发执行异步任务，可以用dispatch_group+semaphore 初始化信号为0，执行完一个异步通过singnal释放一个wait任务
+//异步串行执行异步任务，可以用dispatch_semaphore 初始化信号为1，顺序执行任务，每个任务都加锁，执行任务消耗锁，顺延任务等待，执行完一个任务，singnal，然后下一个任务开锁顺序执行
+// signal: +1
+// wait: 信号量为 0 时等待,阻塞线程; 信号量 >1, 就会 -1 继续往下执行
 - (void)semaphore {
-    NSString *urlString1 = @"/Users/ws/Downloads/Snip20161223_20.png";
-    NSString *urlString2 = @"/Users/ws/Downloads/Snip20161223_21.png";
-    // 创建信号量
-    dispatch_semaphore_t sem = dispatch_semaphore_create(0);
-    dispatch_async(dispatch_get_global_queue(0, 0), ^{
-//        AFHTTPSessionManager *manager = [AFHTTPSessionManager manager];
-//        [manager POST:urlString1 parameters:nil progress:^(NSProgress * _Nonnull downloadProgress) {
-//        } success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
-//            NSLog(@"1完成！");
-//            // 发送信号量
-//            dispatch_semaphore_signal(sem);
-//        } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
-//            NSLog(@"1失败！");
-//            // 发送信号量
-//            dispatch_semaphore_signal(sem);
-//        }];
+    dispatch_group_t group = dispatch_group_create();
+    dispatch_queue_t queue = dispatch_get_global_queue(0, 0);
+    dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
+    dispatch_group_async(group, queue, ^{ //block1
+        NSLog(@"同步任务A");
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2.0f * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            NSLog(@"网络异步任务一");
+            //网络任务执行完毕, 信号量+1, 不再阻塞当前线程, block1 执行完毕
+            dispatch_semaphore_signal(semaphore);
+        });
+        //网络任务不执行完时,一直等待, 阻塞当前线程, block1 没执行完
+        dispatch_semaphore_wait(semaphore, DISPATCH_TIME_FOREVER);
     });
     
-    dispatch_async(dispatch_get_global_queue(0, 0), ^{
-        // 等待信号量
-        dispatch_semaphore_wait(sem, DISPATCH_TIME_FOREVER);
-//        AFHTTPSessionManager *manager = [AFHTTPSessionManager manager];
-//
-//        [manager POST:urlString2 parameters:nil progress:^(NSProgress * _Nonnull downloadProgress) {
-//
-//        } success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
-//            NSLog(@"2完成！");
-//        } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
-//            NSLog(@"2失败！");
-//        }];
+    dispatch_group_async(group, queue, ^{
+        NSLog(@"同步任务B");
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.8f * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            NSLog(@"网络异步任务二");
+            dispatch_semaphore_signal(semaphore);
+        });
+        dispatch_semaphore_wait(semaphore, DISPATCH_TIME_FOREVER);
+    });
+    
+    dispatch_group_async(group, queue, ^{
+        NSLog(@"同步任务C");
+    });
+    
+    dispatch_group_async(group, queue, ^{
+        NSLog(@"同步任务D");
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(3.5f * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            NSLog(@"网络异步任务四");
+            dispatch_semaphore_signal(semaphore);
+        });
+        dispatch_semaphore_wait(semaphore, DISPATCH_TIME_FOREVER);
+    });
+    
+    dispatch_group_notify(group, queue, ^{
+        NSLog(@"任务完成执行");
     });
 }
 
-- (void)gcdSemaphore {
-    dispatch_queue_t workConcurrentQueue = dispatch_queue_create("cccccccc", DISPATCH_QUEUE_CONCURRENT);
-    dispatch_queue_t serialQueue = dispatch_queue_create("sssssssss",DISPATCH_QUEUE_SERIAL);
-    dispatch_semaphore_t semaphore = dispatch_semaphore_create(3);
 
-    for (NSInteger i = 0; i < 10; i++) {
-      dispatch_async(serialQueue, ^{
-          dispatch_semaphore_wait(semaphore, DISPATCH_TIME_FOREVER);
-          dispatch_async(workConcurrentQueue, ^{
-              NSLog(@"thread-info:%@开始执行任务%d",[NSThread currentThread],(int)i);
-              sleep(1);
-              NSLog(@"thread-info:%@结束执行任务%d",[NSThread currentThread],(int)i);
-              dispatch_semaphore_signal(semaphore);});
-      });
-    }
-    NSLog(@"主线程...!");
+- (void)groupEnter {
+    dispatch_group_t group = dispatch_group_create();
+    dispatch_queue_t queue = dispatch_get_global_queue(0, 0);
+    dispatch_group_enter(group);
+    dispatch_group_async(group, queue, ^{
+        NSLog(@"同步任务A");
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2.0f * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            NSLog(@"网络异步任务一");
+            dispatch_group_leave(group);
+        });
+    });
+    
+    dispatch_group_enter(group);
+    dispatch_group_async(group, queue, ^{
+        
+        NSLog(@"同步任务B");
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.8f * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            NSLog(@"网络异步任务二");
+            dispatch_group_leave(group);
+        });
+    });
+    dispatch_group_enter(group);
+    dispatch_group_async(group, queue, ^{
+        NSLog(@"同步任务C");
+        dispatch_group_leave(group);
+    });
+    
+    dispatch_group_enter(group);
+    dispatch_group_async(group, queue, ^{
+        
+        NSLog(@"同步任务D");
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(3.5f * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            NSLog(@"网络异步任务四");
+            dispatch_group_leave(group);
+        });
+    });
+    
+    dispatch_group_notify(group, queue, ^{
+        NSLog(@"任务完成执行");
+    });
+
+}
+
+- (void)simulateNetwork {
+    dispatch_group_t group = dispatch_group_create();
+    dispatch_queue_t queue = dispatch_get_global_queue(0, 0);
+    dispatch_group_async(group, queue, ^{
+        NSLog(@"同步任务A");
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2.0f * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            NSLog(@"网络异步任务AA");
+        });
+        //因为并发队列里面的任务，只是负责打印和发送请求的操作，异步回调数据是不归队列管的，任务的执行完毕，只是Block代码块代码执行完，如果里面还包含异步任务，这里就需要通过信号量dispatch_semaphore来实现了。
+    });
+    
+    dispatch_group_async(group, queue, ^{
+        NSLog(@"同步任务B");
+    });
+    
+    dispatch_group_async(group, queue, ^{
+        NSLog(@"同步任务C");
+    });
+    
+    dispatch_group_notify(group, queue, ^{
+        NSLog(@"任务完成执行");
+    });
+}
+
+- (void)operation {
+    NSBlockOperation *operatioon1 = [NSBlockOperation blockOperationWithBlock:^{
+            NSLog(@"任务A");
+    }];
+    
+    NSBlockOperation *operatioon2 = [NSBlockOperation blockOperationWithBlock:^{
+        NSLog(@"任务B");
+    }];
+    
+    NSBlockOperation *operatioon3 = [NSBlockOperation blockOperationWithBlock:^{
+        NSLog(@"任务C");
+    }];
+    
+    NSBlockOperation *operatioon4 = [NSBlockOperation blockOperationWithBlock:^{
+        NSLog(@"任务D");
+    }];
+    
+    [operatioon4 addDependency:operatioon1];
+    [operatioon4 addDependency:operatioon2];
+    [operatioon4 addDependency:operatioon3];
+    
+    NSOperationQueue *queue = [[NSOperationQueue alloc] init];
+    [queue addOperations:@[operatioon1,operatioon2,operatioon3,operatioon4] waitUntilFinished:YES];
 }
 
 
-#pragma mark - 多读单写
-- (void)readWrite {
-    [self write:@"1" sleep:3.0];
-    [self read];
-    [self write:@"2" sleep:1.0];
-    [self read];
-    [self read];
-    [self write:@"3" sleep:0.0];
-    [self read];
+- (void)barrier {
+    dispatch_queue_t queue = dispatch_queue_create(0, DISPATCH_QUEUE_CONCURRENT);
+    dispatch_async(queue, ^{
+        NSLog(@"任务A");
+    });
+    
+    dispatch_async(queue, ^{
+        NSLog(@"任务B");
+    });
+    
+    dispatch_async(queue, ^{
+        NSLog(@"任务C");
+    });
+    
+    dispatch_barrier_async(queue, ^{
+        NSLog(@"阻塞自定义并发队列");
+    });
+    
+    dispatch_async(queue, ^{
+        NSLog(@"任务D");
+    });
+    
+    dispatch_async(queue, ^{
+        NSLog(@"任务E");
+    });
 }
 
-- (void)read {
-    dispatch_async(self.readWriteQueue, ^{
-        NSLog(@"读 array: %@",self.array);
+- (void)group {
+    dispatch_group_t group = dispatch_group_create();
+    dispatch_queue_t queue = dispatch_get_global_queue(0, 0);
+    dispatch_group_async(group, queue, ^{
+        NSLog(@"同步任务A");
+    });
+    
+    dispatch_group_async(group, queue, ^{
+        NSLog(@"同步任务B");
+    });
+    
+    dispatch_group_async(group, queue, ^{
+        NSLog(@"同步任务C");
+    });
+    
+    dispatch_group_notify(group, queue, ^{
+        NSLog(@"任务完成执行");
     });
 }
 
-- (void)write: (NSString *)str sleep:(double)time {
-    NSLog(@"array: %@",self.array);
-    dispatch_barrier_async(self.readWriteQueue, ^{
-        [NSThread sleepForTimeInterval:time];              // 模拟耗时操作
-        [self.array addObject:str];
-        NSLog(@"array: %@  thread:%@",self.array,[NSThread currentThread]);
-    });
 
+#pragma mark performSelector
+- (void)performSelector {
+    NSLog(@"start --- %@",[NSThread currentThread]);
+    dispatch_queue_t globalQueue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
+    //sync 时: block 在主线程执行,2会输出
+    //async 时: block 在子线程执行
+    dispatch_sync(globalQueue, ^{ //block
+        NSLog(@"1 --- %@",[NSThread currentThread]);
+        //performSelector 需要提交任务到 runloop 上面
+        //performSelector 要想执行,必须是方法调用的当前线程是有 runloop 的,如果没有就会失效
+        [self performSelector:@selector(performSelectorAction) withObject:nil afterDelay:0];
+        NSLog(@"3 --- %@",[NSThread currentThread]);
+    });
+    NSLog(@"end --- %@",[NSThread currentThread]);
 }
 
-#pragma mark - barrier
-/*
- * 特点：
- * 1.barrier之前的任务并发执行，barrier之后的任务在barrier任务完成之后并发执行
- * 2.会开启新线程执行任务
- * 3.不会阻塞当前线程（主线程）
- */
-- (void)executeBarrierAsync {
-    dispatch_queue_t concurrentQueue = dispatch_queue_create("concurrent_queue",DISPATCH_QUEUE_CONCURRENT);
-
-    NSLog(@"CurrentThread---%@",[NSThread currentThread]);  // 打印当前线程
-    NSLog(@"---begin---");
-    
-    NSLog(@"追加任务1");
-    dispatch_async(concurrentQueue, ^{
-        // 追加任务1
-        for (int i = 0; i < 2; ++i) {
-            [NSThread sleepForTimeInterval:2];              // 模拟耗时操作
-            NSLog(@"1---%@",[NSThread currentThread]);      // 打印当前线程
-        }
-    });
-    
-    NSLog(@"追加任务2");
-    dispatch_async(concurrentQueue, ^{
-        // 追加任务2
-        for (int i = 0; i < 2; ++i) {
-            [NSThread sleepForTimeInterval:2];              // 模拟耗时操作
-            NSLog(@"2---%@",[NSThread currentThread]);      // 打印当前线程
-        }
-    });
-    
-    NSLog(@"追加barrier_async任务");
-    dispatch_barrier_sync(concurrentQueue, ^{
-        // 追加barrier任务
-        for (int i = 0; i < 2; ++i) {
-            [NSThread sleepForTimeInterval:2];              // 模拟耗时操作
-            NSLog(@"barrier---%@",[NSThread currentThread]);      // 打印当前线程
-        }
-    });
-    /*
-     barrier_sync会阻塞它之后的任务的入队，必须等到barrier_sync任务执行完毕，才会把后面的异步任务添加到并发队列中，而barrier_async不需要等自身的block执行完成，就可以把后面的任务添加到队列中。
-     */
-    
-    NSLog(@"追加任务3");
-    dispatch_async(concurrentQueue, ^{
-        // 追加任务3
-        for (int i = 0; i < 2; ++i) {
-            [NSThread sleepForTimeInterval:2];              // 模拟耗时操作
-            NSLog(@"3---%@",[NSThread currentThread]);      // 打印当前线程
-        }
-    });
-    
-    NSLog(@"追加任务4");
-    dispatch_async(concurrentQueue, ^{
-        // 追加任务4
-        for (int i = 0; i < 2; ++i) {
-            [NSThread sleepForTimeInterval:2];              // 模拟耗时操作
-            NSLog(@"4---%@",[NSThread currentThread]);      // 打印当前线程
-        }
-    });
-    
-    NSLog(@"---end---");
-    NSLog(@"*********************************************************");
+- (void)performSelectorAction {
+    NSLog(@"2 --- %@",[NSThread currentThread]);
 }
 
-//作者：左耳钉zed
-//链接：https://juejin.cn/post/6844903833831735310
-//来源：掘金
-//著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。
 
-
-#pragma mark - 多线程高级考察
+#pragma mark 主队列
 //主队列特点: 必须等待主线程中的任务执行完,再执行主队列中的任务
-- (void)mainQueue2 {
+- (void)mainSync {
     dispatch_queue_t mainQueue = dispatch_get_main_queue();
     dispatch_sync(mainQueue, ^{//block1
         NSLog(@"1");
@@ -255,7 +266,7 @@
     //mainQueueSync 和 block1 相互等待
 }
 
-- (void)mainQueue {
+- (void)mainAsnyc {
     dispatch_queue_t mainQueue = dispatch_get_main_queue();
     dispatch_async(mainQueue, ^{
         NSLog(@"1");
@@ -263,171 +274,190 @@
     NSLog(@"end");
 }
 
-- (void)serialQueueAsyncSync {
-    NSLog(@"begin--%@",[NSThread currentThread]);
-    dispatch_queue_t serialQueue = dispatch_queue_create("serial_queue", DISPATCH_QUEUE_SERIAL);
-    dispatch_async(serialQueue, ^{//block1
-        NSLog(@"1--%@",[NSThread currentThread]);
-        dispatch_sync(serialQueue, ^{ //block2
-            NSLog(@"2--%@",[NSThread currentThread]);
-            //block2 等 block1 走完
-            //3 需要等 block2 走完
-        });
-        NSLog(@"3--%@",[NSThread currentThread]);
-    });
-    NSLog(@"end--%@",[NSThread currentThread]);
-}
 
-
-//碰到异步才可能切换线程
-- (void)serialQueueSyncAsync {
-    NSLog(@"begin--%@",[NSThread currentThread]);
-    dispatch_queue_t serialQueue = dispatch_queue_create("serial_queue", DISPATCH_QUEUE_SERIAL);
-    dispatch_sync(serialQueue, ^{
-        NSLog(@"1--%@",[NSThread currentThread]);
-        dispatch_async(serialQueue, ^{
-            NSLog(@"2--%@",[NSThread currentThread]);
-        });
-        //TODO: 为什么即使耗时了,2 还是会等 3,不在一个线程啊,3 在主线程,2 在子线程?????????
-        sleep(5);
-        NSLog(@"3--%@",[NSThread currentThread]);
-
-//        dispatch_async(serialQueue, ^{
-//            NSLog(@"3--%@",[NSThread currentThread]);
-//        });
-//        sleep(2);
-//        NSLog(@"4--%@",[NSThread currentThread]);
-    });
-    NSLog(@"end--%@",[NSThread currentThread]);
-}
-
-
-- (void)concurrentQueueSyncAsync {
-    NSLog(@"begin--%@",[NSThread currentThread]);
-    dispatch_queue_t concurrentQueue = dispatch_queue_create("concurrent_queue",DISPATCH_QUEUE_CONCURRENT);
-    dispatch_sync(concurrentQueue, ^{
-        NSLog(@"1--%@",[NSThread currentThread]);
-        dispatch_async(concurrentQueue, ^{
-            NSLog(@"2--%@",[NSThread currentThread]);
-        });
-        dispatch_async(concurrentQueue, ^{
-            NSLog(@"3--%@",[NSThread currentThread]);
-        });
-        NSLog(@"4--%@",[NSThread currentThread]);
-    });
-    NSLog(@"end--%@",[NSThread currentThread]);
-}
-
-//主队列同步执行
-- (void)mainQueueSync {
-    dispatch_queue_t mainQueue = dispatch_get_main_queue();
-    for (int i = 0; i<10; i++) {
-        //同步执行: 不会开辟线程, 所以只有一条线程
-        //串行队列: 执行完一个任务, GCD 才会取下一个任务
-        /*
-         但是现在是分派到了主队列, 主队列的任务必须在主线程执行, 主线程正在执行 mainQueueSync 函数, 而 mainQueueSync 执行完必须依赖于 block 执行完
-         而 block 的执行依赖于队列先进先出的性质,必须得让先进 mainQueueSync 函数执行完才能执行
-         "队列"引起的相互等待
-         主队列同步与串行队列同步关键区别点在于 block 放在了主队列中,要想执行它,必须让队列中的 mainQueueSync 执行完才可以
-         而放到串行队列中, 串行队列只有 block 这一个任务, 执行完了, 主线程继续执行 serialQueueSync 这个函数, 不会死锁
-         所以只要是两个任务分派到一个串行队列中,就会形成死锁
-         */
-        dispatch_sync(mainQueue, ^{
-            sleep(1);
-            NSLog(@"%@ 执行任务%d current theard:%@",[NSDate date],i,[NSThread currentThread]);
-        });
-    }
-}
-
-//并发队列同步执行的嵌套
-- (void)concurrentQueueSyncNest {
+#pragma mark 并发队列嵌套
+- (void)concurrentSyncSync {
     dispatch_queue_t globalQueue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
-    NSLog(@"1");
-    //以同步方式提交一个任务到并发队列
-    dispatch_sync(globalQueue, ^{ //任务 1: 打印 2,3,4
-        NSLog(@"2");
-        //并发队列特点就是任务可以并发执行, 所以任务 1 没有执行完也不影响任务 2
+    NSLog(@"start --- %@",[NSThread currentThread]);
+    //sync 决定了 block1 在主线程执行
+    //并发队列碰到同步和串行队列没有区别, 按序执行 1,2,3,end
+    dispatch_sync(globalQueue, ^{ //block1
+        NSLog(@"1 --- %@",[NSThread currentThread]);
         dispatch_sync(globalQueue, ^{
-            NSLog(@"3"); //任务 2: 打印 3
+            NSLog(@"2 --- %@",[NSThread currentThread]);
         });
-        NSLog(@"4");
+        NSLog(@"3 --- %@",[NSThread currentThread]);
     });
-    NSLog(@"5");
+    NSLog(@"end --- %@",[NSThread currentThread]);
 }
 
-//performSelector
-- (void)concurrentQueuePerformSelector {
+- (void)concurrentSyncAsync {
     dispatch_queue_t globalQueue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
-    dispatch_async(globalQueue, ^{
-        NSLog(@"1");
-        //performSelector 需要提交任务到 runloop 上面
-        //performSelector 要想执行,必须是方法调用的当前线程是有 runloop 的,如果没有就会失效
-        [self performSelector:@selector(printLog) withObject:nil afterDelay:0];
-        NSLog(@"3");
+    NSLog(@"start --- %@",[NSThread currentThread]);
+    //sync 决定了 block1 在主线程执行
+    //并发队列碰到同步和串行队列没有区别, 按序执行 block1 执行完后再执行 end
+    // async 决定了 block2 在子线程执行,不阻塞主线程, 1,3,2,end
+    dispatch_sync(globalQueue, ^{ //block1
+        NSLog(@"1 --- %@",[NSThread currentThread]);
+        dispatch_async(globalQueue, ^{ //block2
+            NSLog(@"2 --- %@",[NSThread currentThread]);
+        });
+        NSLog(@"3 --- %@",[NSThread currentThread]);
     });
+    NSLog(@"end --- %@",[NSThread currentThread]);
 }
 
-- (void)printLog {
-    NSLog(@"2");
+- (void)concurrentAsyncSync {
+    dispatch_queue_t globalQueue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
+    NSLog(@"start --- %@",[NSThread currentThread]);
+    //async 决定了 block1 在子线程执行, 不阻塞当前线程, 先 end 再 1
+    //并发队列决定了 globalQueue 第一个任务不执行完也会执行第二个, 所以 block1 还没完成时就可以执行 block2 , 如果是串行队列, block1,2 就死锁了
+    dispatch_async(globalQueue, ^{ //block1
+        NSLog(@"1 --- %@",[NSThread currentThread]);
+        dispatch_sync(globalQueue, ^{ //block2
+            NSLog(@"2 --- %@",[NSThread currentThread]);
+        });
+        NSLog(@"3 --- %@",[NSThread currentThread]);
+    });
+    NSLog(@"end --- %@",[NSThread currentThread]);
 }
 
-#pragma mark - 基础操作
-- (void)executeGCDBasic {
-//    [self serialQueueSync];
-    [self concurrentQueueSync];
-    [self serialQueueAsync];
+- (void)concurrentAsyncAsync {
+    dispatch_queue_t globalQueue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
+    NSLog(@"start --- %@",[NSThread currentThread]);
+    dispatch_async(globalQueue, ^{ //block1
+        NSLog(@"1 --- %@",[NSThread currentThread]);
+        dispatch_async(globalQueue, ^{ //block2
+            NSLog(@"2 --- %@",[NSThread currentThread]);
+        });
+        NSLog(@"3 --- %@",[NSThread currentThread]);
+    });
+    NSLog(@"end --- %@",[NSThread currentThread]);
 }
 
-//串行队列同步执行
-- (void)serialQueueSync {
-    dispatch_queue_t serialQueue = dispatch_queue_create("serial_queue", DISPATCH_QUEUE_SERIAL);
-    for (int i = 0; i<10; i++) {
-        //同步执行: 不会开辟线程, 所以只有一条线程
-        //串行队列: 执行完一个任务, GCD 才会取下一个任务
+
+#pragma mark 串行队列嵌套
+- (void)serialSyncSync {
+    dispatch_queue_t serialQueue = dispatch_queue_create("serial", DISPATCH_QUEUE_SERIAL);
+    NSLog(@"start --- %@",[NSThread currentThread]);
+    //sync 决定任务在主线程执行
+    //串行队列 决定了按序执行
+    //block1 加入到主线程中,不执行完不会走 block2, 但是 2 是 1 的一部分, 2 不执行, 1 永远执行不完, 所以 block1,2 相互等待造成死锁, 报错 EXC_BAD_INSTRUCTION
+    dispatch_sync(serialQueue, ^{ //block1
+        NSLog(@"1 --- %@",[NSThread currentThread]);
+        dispatch_sync(serialQueue, ^{ //block2
+            NSLog(@"2 --- %@",[NSThread currentThread]);
+        });
+        NSLog(@"3 --- %@",[NSThread currentThread]);
+    });
+    NSLog(@"end --- %@",[NSThread currentThread]);
+}
+
+- (void)serialSyncAsync {
+    dispatch_queue_t serialQueue = dispatch_queue_create("serial", DISPATCH_QUEUE_SERIAL);
+    NSLog(@"start --- %@",[NSThread currentThread]);
+    //sync 决定 block1 在主线程执行
+    //串行队列 决定了按序执行, 肯定先 1,3 再 end
+    //async 决定了 block2 在子线程执行, 2 的顺序不定 ❌ 2 一定是在 1,3,end 后面,为什么?
+    dispatch_sync(serialQueue, ^{ //block1
+        NSLog(@"1 --- %@",[NSThread currentThread]);
+        dispatch_async(serialQueue, ^{ //block2
+            NSLog(@"2 --- %@",[NSThread currentThread]);
+        });
+        sleep(2);
+        NSLog(@"3 --- %@",[NSThread currentThread]);
+    });
+    NSLog(@"end --- %@",[NSThread currentThread]);
+}
+
+- (void)serialAsyncSync {
+    dispatch_queue_t serialQueue = dispatch_queue_create("serial", DISPATCH_QUEUE_SERIAL);
+    NSLog(@"start --- %@",[NSThread currentThread]);
+    //async 决定 block1 在子线程执行, 而 end 在主线程, 肯定是 start, end
+    //串行队列 决定了按序执行, 肯定是 1,3
+    //sync 决定了 block2 在当前子线程执行,会阻塞当前前程, 肯定是 2,3
+    // start, end, 1, 2, 3  ❌  结果是死锁了
+    // block2 的 sync 需要等待 block1 执行,但是 2 是 1 的一部分 ✅
+    dispatch_async(serialQueue, ^{ //block1
+        NSLog(@"1 --- %@",[NSThread currentThread]);
+        dispatch_sync(serialQueue, ^{ //block2
+            NSLog(@"2 --- %@",[NSThread currentThread]);
+        });
+        NSLog(@"3 --- %@",[NSThread currentThread]);
+    });
+    NSLog(@"end --- %@",[NSThread currentThread]);
+}
+
+- (void)serialAsyncAsync {
+    dispatch_queue_t serialQueue = dispatch_queue_create("serial", DISPATCH_QUEUE_SERIAL);
+    NSLog(@"start --- %@",[NSThread currentThread]);
+    //async 决定 block1 在子线程执行, 而 end 在主线程, 肯定是 start, end
+    //串行队列 决定了按序执行, 肯定是 1,3
+    //async 决定了 block2 在当前子线程执行,不阻塞当前子前程, 执行完 block1 后再执行 block2, 先 1,3 再 2
+    dispatch_async(serialQueue, ^{ //block1
+        NSLog(@"1 --- %@",[NSThread currentThread]);
+        dispatch_async(serialQueue, ^{ //block2
+            NSLog(@"2 --- %@",[NSThread currentThread]);
+        });
+        NSLog(@"3 --- %@",[NSThread currentThread]);
+    });
+    NSLog(@"end --- %@",[NSThread currentThread]);
+}
+
+
+
+#pragma mark 基础操作
+- (void)serialSync {
+    NSLog(@"****************************** serialSync ****************************************");
+    dispatch_queue_t serialQueue = dispatch_queue_create("serial", DISPATCH_QUEUE_SERIAL);
+    NSLog(@"start --- %@",[NSThread currentThread]);
+    for (int i=0; i<=10; i++) {
         dispatch_sync(serialQueue, ^{
-            sleep(1);
-            NSLog(@"%@ 串行队列同步执行任务 **%d** current theard:%@",[NSDate date],i,[NSThread currentThread]);
+            NSLog(@"%d --- %@",i,[NSThread currentThread]);
         });
     }
+    NSLog(@"end --- %@",[NSThread currentThread]);
+    NSLog(@"\n");
 }
 
-//并发队列同步执行
-- (void)concurrentQueueSync {
-    dispatch_queue_t concurrentQueue = dispatch_queue_create("concurrent_queue",DISPATCH_QUEUE_CONCURRENT);
-    for (int i = 0; i<10; i++) {
-        //同步执行: 不会开辟线程, 所以只有一条线程
-        //并发队列: GCD 取完一个任务,会立即取下一个任务放到另一个线程, 但是同步执行不会开线程,所以只有一条线程, 同一时间只会有一个打印
-        dispatch_sync(concurrentQueue, ^{
-            sleep(1);
-            NSLog(@"%@ 并发队列同步执行任务 **%d** current theard:%@",[NSDate date],i,[NSThread currentThread]);
-        });
-    }
-}
-
-//串行并列异步执行
-- (void)serialQueueAsync {
-    dispatch_queue_t serialQueue = dispatch_queue_create("serial_queue",DISPATCH_QUEUE_SERIAL);
-    for (int i = 0; i<10; i++) {
-        //异步执行: 会开线程, 所以 thread 不是主线程,是新的线程
-        //串行队列: 任务一个一个执行, 按序输出, 所以是"一个"新线程
+- (void)serialAsync {
+    NSLog(@"****************************** serialAsync ****************************************");
+    dispatch_queue_t serialQueue = dispatch_queue_create("serial", DISPATCH_QUEUE_SERIAL);
+    NSLog(@"start --- %@",[NSThread currentThread]);
+    for (int i=0; i<=10; i++) {
         dispatch_async(serialQueue, ^{
-            sleep(1);
-            NSLog(@"%@ 串行并列异步执行任务%d current theard:%@",[NSDate date],i,[NSThread currentThread]);
+            NSLog(@"%d --- %@",i,[NSThread currentThread]);
         });
     }
+    NSLog(@"end --- %@",[NSThread currentThread]);
+    NSLog(@"\n");
 }
 
-//并发队列异步执行
-- (void)concurrentQueueAsync {
-    dispatch_queue_t concurrentQueue = dispatch_queue_create("concurrent_queue",DISPATCH_QUEUE_CONCURRENT);
-    for (int i = 0; i<100000; i++) {
-        //异步执行: 会开线程
-        //并发队列: GCD 取完一个任务,会立即取下一个任务放到另一个线程, 所以会开多条线程, 并且不按顺序
-        dispatch_async(concurrentQueue, ^{
-            sleep(1);
-            NSLog(@"%@ 执行任务%d current theard:%@",[NSDate date],i,[NSThread currentThread]);
+- (void)concurrentSync {
+    NSLog(@"****************************** concurrentSync ****************************************");
+    dispatch_queue_t serialQueue = dispatch_queue_create("serial", DISPATCH_QUEUE_CONCURRENT);
+    NSLog(@"start --- %@",[NSThread currentThread]);
+    for (int i=0; i<=10; i++) {
+        dispatch_sync(serialQueue, ^{
+            NSLog(@"%d --- %@",i,[NSThread currentThread]);
         });
     }
+    NSLog(@"end --- %@",[NSThread currentThread]);
+    NSLog(@"\n");
 }
+
+- (void)concurrentAsync {
+    NSLog(@"****************************** concurrentAsync ****************************************");
+    dispatch_queue_t serialQueue = dispatch_queue_create("serial", DISPATCH_QUEUE_CONCURRENT);
+    NSLog(@"start --- %@",[NSThread currentThread]);
+    for (int i=0; i<=10; i++) {
+        dispatch_async(serialQueue, ^{
+            NSLog(@"%d --- %@",i,[NSThread currentThread]);
+        });
+    }
+    NSLog(@"end --- %@",[NSThread currentThread]);
+    NSLog(@"\n");
+}
+
 
 @end

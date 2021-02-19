@@ -12,6 +12,8 @@
     dispatch_queue_t concurrent_queue;
     NSMutableDictionary *userCenterDic;
 }
+@property(nonatomic, strong) NSMutableArray *array;
+@property(nonatomic, strong) dispatch_queue_t readWriteTestQueue;
 @end
 
 @implementation JJUserCenter
@@ -20,6 +22,7 @@
     if (self = [super init]) {
         concurrent_queue = dispatch_queue_create("read_write_queue", DISPATCH_QUEUE_CONCURRENT);
         userCenterDic = [NSMutableDictionary dictionary];
+        self.readWriteTestQueue = dispatch_queue_create("read_write_queue", DISPATCH_QUEUE_CONCURRENT);
     }
     return  self;
 }
@@ -44,5 +47,33 @@
         [self->userCenterDic setObject:obj forKey:key];
     });
 }
+
+#pragma mark - 多读单写测试
+- (void)readWriteTest {
+    [self write:@"1" sleep:3.0];
+    [self read];
+    [self write:@"2" sleep:1.0];
+    [self read];
+    [self read];
+    [self write:@"3" sleep:0.0];
+    [self read];
+}
+
+- (void)read {
+    dispatch_async(self.readWriteTestQueue, ^{
+        NSLog(@"读 array: %@",self.array);
+    });
+}
+
+- (void)write: (NSString *)str sleep:(double)time {
+    NSLog(@"array: %@",self.array);
+    dispatch_barrier_async(self.readWriteTestQueue, ^{
+        [NSThread sleepForTimeInterval:time];              // 模拟耗时操作
+        [self.array addObject:str];
+        NSLog(@"array: %@  thread:%@",self.array,[NSThread currentThread]);
+    });
+
+}
+
 
 @end
