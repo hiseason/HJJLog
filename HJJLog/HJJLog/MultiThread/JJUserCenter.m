@@ -18,16 +18,28 @@
 
 @implementation JJUserCenter
 
++ (void)execute {
+    JJUserCenter *userCenter = [[JJUserCenter alloc] init];
+    [userCenter readWriteTest];
+}
+
 - (instancetype)init {
     if (self = [super init]) {
         concurrent_queue = dispatch_queue_create("read_write_queue", DISPATCH_QUEUE_CONCURRENT);
         userCenterDic = [NSMutableDictionary dictionary];
         self.readWriteTestQueue = dispatch_queue_create("read_write_queue", DISPATCH_QUEUE_CONCURRENT);
+        self.array = [NSMutableArray array];
     }
     return  self;
 }
 
-//读读并发
+//同步执行, 任务会放到当前线程中, 如果在子线程 A 中执行,那么 block 在 A 中执行
+//异步执行, 任务会放到新的线程中, readWriteTestQueue
+//串行队列, GCD 一个任务执行完毕后才会取下一个
+//并发队列, GCD 会同时取多个任务放到多个线程中,前提是异步执行,这样才会开辟线程
+//读读并发(保证顺序) 串行同步\异步, 并发同步
+//读写互斥
+//写写互斥
 - (id)objectForKey:(NSString *)key {
     __block id obj;
     //同步读取指定数据
@@ -50,30 +62,43 @@
 
 #pragma mark - 多读单写测试
 - (void)readWriteTest {
-    [self write:@"1" sleep:3.0];
-    [self read];
-    [self write:@"2" sleep:1.0];
-    [self read];
-    [self read];
-    [self write:@"3" sleep:0.0];
+    dispatch_queue_t queueOne = dispatch_queue_create("network_queue_one", DISPATCH_QUEUE_CONCURRENT);
+    dispatch_async(queueOne, ^{
+        [self write:@"1" sleep:3.0];
+        [self read];
+    });
+    
+    dispatch_queue_t queueTwo = dispatch_queue_create("network_queue_two", DISPATCH_QUEUE_CONCURRENT);
+    dispatch_async(queueTwo, ^{
+        [self write:@"2" sleep:1.0];
+        [self read];
+    });
+    
+    dispatch_queue_t queueThree = dispatch_queue_create("network_queue_three", DISPATCH_QUEUE_CONCURRENT);
+    dispatch_async(queueThree, ^{
+        [self read];
+    });
+
+    dispatch_queue_t queueFour = dispatch_queue_create("network_queue_four", DISPATCH_QUEUE_CONCURRENT);
+    dispatch_async(queueFour, ^{
+        [self write:@"3" sleep:0.0];
+        [self read];
+    });
+
     [self read];
 }
 
 - (void)read {
-    dispatch_async(self.readWriteTestQueue, ^{
-        NSLog(@"读 array: %@",self.array);
-    });
+    NSString *arrStr = [self.array componentsJoinedByString:@","];
+    NSLog(@"读 array: %@",arrStr);
 }
 
 - (void)write: (NSString *)str sleep:(double)time {
-    NSLog(@"array: %@",self.array);
-    dispatch_barrier_async(self.readWriteTestQueue, ^{
-        [NSThread sleepForTimeInterval:time];              // 模拟耗时操作
-        [self.array addObject:str];
-        NSLog(@"array: %@  thread:%@",self.array,[NSThread currentThread]);
-    });
-
+    [self.array addObject:str];
+    NSString *arrStr = [self.array componentsJoinedByString:@","];
+    NSLog(@"写入:%@ array: %@  thread:%@",str,arrStr,[NSThread currentThread]);
 }
+
 
 
 @end

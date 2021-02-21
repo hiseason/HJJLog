@@ -11,6 +11,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface JJUserCenter : NSObject
 
++ (void)execute;
+
 @end
 
 NS_ASSUME_NONNULL_END

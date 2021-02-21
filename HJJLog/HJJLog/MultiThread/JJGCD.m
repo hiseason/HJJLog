@@ -29,6 +29,7 @@
 
 @interface JJGCD()
 
+
 @end
 
 
@@ -42,11 +43,11 @@
 //    [gcd concurrentAsync];
 //    [gcd performSelector];
 //    [gcd mainAsnyc];
-    [gcd groupEnter];
+    [gcd barrierAsync];
 }
 
 #pragma mark 执行完 A,B,C 再执行 D
-//异步并发执行异步任务，可以用dispatch_group+semaphore 初始化信号为0，执行完一个异步通过singnal释放一个wait任务
+//异步并发执行异步任务，可以用dispa tch_group+semaphore 初始化信号为0，执行完一个异步通过singnal释放一个wait任务
 //异步串行执行异步任务，可以用dispatch_semaphore 初始化信号为1，顺序执行任务，每个任务都加锁，执行任务消耗锁，顺延任务等待，执行完一个任务，singnal，然后下一个任务开锁顺序执行
 // signal: +1
 // wait: 信号量为 0 时等待,阻塞线程; 信号量 >1, 就会 -1 继续往下执行
@@ -212,6 +213,35 @@
         NSLog(@"任务E");
     });
 }
+
+
+- (void)barrierAsync {
+    dispatch_queue_t queue = dispatch_queue_create(0, DISPATCH_QUEUE_CONCURRENT);
+    dispatch_async(queue, ^{
+        NSLog(@"任务A");
+    });
+    
+    dispatch_async(queue, ^{
+        NSLog(@"任务B");
+    });
+    
+    dispatch_async(queue, ^{
+        NSLog(@"任务C");
+    });
+    
+    dispatch_barrier_sync(queue, ^{
+        NSLog(@"阻塞自定义并发队列");
+    });
+    
+    dispatch_async(queue, ^{
+        NSLog(@"任务D");
+    });
+    
+    dispatch_async(queue, ^{
+        NSLog(@"任务E");
+    });
+}
+
 
 - (void)group {
     dispatch_group_t group = dispatch_group_create();
