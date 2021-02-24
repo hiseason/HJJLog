@@ -35,4 +35,11 @@
 
 @implementation JJProperty
 
+
+- (void)autoreleaseTheory {
+    @autoreleasepool {
+        
+    }
+}
+
 @end

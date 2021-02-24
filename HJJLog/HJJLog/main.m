@@ -16,3 +16,14 @@ int main(int argc, char * argv[]) {
     }
     return UIApplicationMain(argc, argv, nil, appDelegateClassName);
 }
+
+/*
+ @autoreleasepool {} 相当于
+ NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+ [pool release];
+ 
+ 
+ 
+*/
+
+
