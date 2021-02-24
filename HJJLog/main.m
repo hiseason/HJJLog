@@ -1,0 +1,29 @@
+//
+//  main.m
+//  HJJLog
+//
+//  Created by 郝旭姗 on 2021/1/12.
+//
+
+#import <UIKit/UIKit.h>
+#import "AppDelegate.h"
+
+int main(int argc, char * argv[]) {
+    NSString * appDelegateClassName;
+    @autoreleasepool {
+        // Setup code that might create autoreleased objects goes here.
+        appDelegateClassName = NSStringFromClass([AppDelegate class]);
+    }
+    return UIApplicationMain(argc, argv, nil, appDelegateClassName);
+}
+
+/*
+ @autoreleasepool {} 相当于
+ NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+ [pool release];
+ 
+ 
+ 
+*/
+
+
