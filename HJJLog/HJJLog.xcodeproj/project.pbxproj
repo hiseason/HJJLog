@@ -38,6 +38,7 @@
 		1DF8180A25DAAEA600520872 /* JJLock.m in Sources */ = {isa = PBXBuildFile; fileRef = 1DF8180925DAAEA600520872 /* JJLock.m */; };
 		2B09F35A25E246E5008ED458 /* MedianFind.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B09F35925E246E5008ED458 /* MedianFind.swift */; };
 		2B3758DC25C9563500A96BB9 /* Judge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B3758DB25C9563500A96BB9 /* Judge.swift */; };
+		2B4A091F25E7C13F0080717E /* JJThread.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B4A091E25E7C13F0080717E /* JJThread.m */; };
 		B939260F658EE3D459105561 /* Pods_HJJLogTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8C30C120724667CF123C1334 /* Pods_HJJLogTests.framework */; };
 		E00B0BB4F370CDF6F7B5C2E4 /* Pods_HJJLog_HJJLogUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D8A691AD5E11AF28B32263EE /* Pods_HJJLog_HJJLogUITests.framework */; };
 /* End PBXBuildFile section */
@@ -118,6 +119,8 @@
 		1E9A1FAE2DCB9116AD5DC76E /* Pods-HJJLogTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-HJJLogTests.debug.xcconfig"; path = "Target Support Files/Pods-HJJLogTests/Pods-HJJLogTests.debug.xcconfig"; sourceTree = "<group>"; };
 		2B09F35925E246E5008ED458 /* MedianFind.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MedianFind.swift; sourceTree = "<group>"; };
 		2B3758DB25C9563500A96BB9 /* Judge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Judge.swift; sourceTree = "<group>"; };
+		2B4A091D25E7C13F0080717E /* JJThread.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JJThread.h; sourceTree = "<group>"; };
+		2B4A091E25E7C13F0080717E /* JJThread.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JJThread.m; sourceTree = "<group>"; };
 		7C5EF4948180248AD91BC031 /* Pods-HJJLog.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-HJJLog.debug.xcconfig"; path = "Target Support Files/Pods-HJJLog/Pods-HJJLog.debug.xcconfig"; sourceTree = "<group>"; };
 		8C30C120724667CF123C1334 /* Pods_HJJLogTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_HJJLogTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		9D3DD5621004B0A1DF5B9DAD /* Pods-HJJLog-HJJLogUITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-HJJLog-HJJLogUITests.debug.xcconfig"; path = "Target Support Files/Pods-HJJLog-HJJLogUITests/Pods-HJJLog-HJJLogUITests.debug.xcconfig"; sourceTree = "<group>"; };
@@ -197,6 +200,8 @@
 				1D600A9F25BEEB6C00D53E47 /* JJUserCenter.m */,
 				1D54D45525BAEAB200380784 /* JJRunLoop.h */,
 				1D54D45625BAEAB200380784 /* JJRunLoop.m */,
+				2B4A091D25E7C13F0080717E /* JJThread.h */,
+				2B4A091E25E7C13F0080717E /* JJThread.m */,
 			);
 			path = MultiThread;
 			sourceTree = "<group>";
@@ -569,6 +574,7 @@
 				1DEDACD525AD8943004AB77D /* JJView.m in Sources */,
 				1D600A9825BD864800D53E47 /* JJGCD.m in Sources */,
 				2B3758DC25C9563500A96BB9 /* Judge.swift in Sources */,
+				2B4A091F25E7C13F0080717E /* JJThread.m in Sources */,
 				1D2DC8E125C2DFF100364BF7 /* JJSwift.swift in Sources */,
 				1D66F59025CA459500604F8D /* ArrayAr.swift in Sources */,
 				1DEDAC9D25AD7ED6004AB77D /* main.m in Sources */,
