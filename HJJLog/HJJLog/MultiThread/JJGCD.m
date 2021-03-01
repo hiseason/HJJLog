@@ -43,7 +43,7 @@
 //    [gcd concurrentAsync];
 //    [gcd performSelector];
 //    [gcd mainAsnyc];
-    [gcd barrierAsync];
+    [gcd semaphore];
 }
 
 #pragma mark 执行完 A,B,C 再执行 D
@@ -54,7 +54,7 @@
 - (void)semaphore {
     dispatch_group_t group = dispatch_group_create();
     dispatch_queue_t queue = dispatch_get_global_queue(0, 0);
-    dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
+    dispatch_semaphore_t semaphore = dispatch_semaphore_create(2);
     dispatch_group_async(group, queue, ^{ //block1
         NSLog(@"同步任务A");
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2.0f * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
